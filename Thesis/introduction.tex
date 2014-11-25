@@ -1,18 +1,39 @@
 %The \introduction command is provided as a convenience.
 %if you want special chapter formatting, you'll probably want to avoid using it altogether
 		
-\chapter*{Introduction}
-    \addcontentsline{toc}{chapter}{Introduction}
-		\chaptermark{Introduction}
-		\markboth{Introduction}{Introduction}
-% The three lines above are to make sure that the headers are right, that the intro gets included in the table of contents, and that it doesn't get numbered 1 so that chapter one is 1.
 
-	Welcome to the \LaTeX\ thesis template. If you've never used \TeX\ or \LaTeX\ before, you'll have an initial learning period to go through, but the results of a nicely formatted thesis are worth it for more than the aesthetic benefit: markup like \LaTeX\ is more consistent than the output of a word processor, much less prone to corruption or crashing and the resulting file is smaller than a Word file. While you may have never had problems using Word in the past, your thesis is going to be about twice as large and complex as anything you've written before, taxing Word's capabilities. If you're still on the fence about  using \LaTeX, read the Introduction to LaTeX on the CUS site as well as skim the following template and give it a few weeks. Pretty soon all the markup gibberish will become second nature.
+      \chapter*{Introduction}
+         \addcontentsline{toc}{chapter}{Introduction}
+	\chaptermark{Introduction}
+	\markboth{Introduction}{Introduction}
+	% The three lines above are to make sure that the headers are right, that the intro gets included in the table of contents, and that it doesn't get numbered 1 so that chapter one is 1.
 
-\section{Why use it?}
+% Double spacing: if you want to double space, or one and a half 
+% space, uncomment one of the following lines. You can go back to 
+% single spacing with the \singlespacing command.
+% \onehalfspacing
+% \doublespacing
 	
-\LaTeX\ does a great job of formatting tables and paragraphs. Its line-breaking algorithm was the subject of a PhD.\thinspace thesis. It does a fine job of automatically inserting ligatures, and to top it all off it is the only way to typeset good-looking mathematics.
+	Fluid dynamics is an enormous, and relatively new branch of physics.  In addition to Physics, it's a field of interest for both Engineering and Mathematics.  Its applicability to both liquid and gas flows is useful in many Engineering problems, from aerodynamics to fluid cooling mechanisms [source!].  Fluid dynamical systems are also almost always nonlinear, making them interesting and incredibly difficult Mathematical problems.
 
-\section{Who should use it?}
+	Technically, 2-dimensional fluid dynamics problems do not exist in nature, since nature is intrinsically 3-dimensional.  Relatively thin fluid layers, such as the earths oceans and atmosphere, or just a thin layer of fluid in the lab can be accurately approximated as 2-dimensional systems, since area is so many times greater than depth.  I chose to work with a 2-dimensional thin fluid layer because it's much easier to work with than a 3-dimensional system.  Experimentally, a 2-dimensional system enables me to place and view tracer particles on the surface instead of submerged in the fluid.  Computationally, 2-dimensional systems are also far easier to model, requiring a simpler code, and  significantly less computational power.  This allowed me to write a program myself, that I could run on a regular personal computer.
 
-Anyone who needs to use math, tables, a lot of figures, complex cross-references, IPA or who just cares about the final appearance of their document should use \LaTeX. At Reed, math majors are required to use it, most physics majors will want to use it, and many other science majors may want it also.
+	New techniques for analyzing nonlinear systems paired with a few important technological developments are what made the study of fluid dynamics possible in the last fifty years.  Fluid dynamical systems are usually impossible to solve analytically, so were basically unsolvable until computers became powerful enough to provide computational solutions (source, quotes from nonlin book; something about computers in nonlin.), and experimental measuring tools were precise enough to provide an accurate model of a fluid flow.  Below I provide some historical background and basic information about both of these important developments.
+
+\section{Numerical Concepts}
+
+Talk about CFD and the Navier-Stokes Equations (just introduce, don't derive)
+
+
+\section{Experimental Concepts}
+	
+	Experimental fluid dynamics faced similar issues.  The principles of flow visualization through Particle Image Velocimetry have been around since the early twentieth century, when Ludwig Prandtl observed mica particles on the surface of a flowing fluid [PIV p2].  Although this did allow him to visualize the patterns in a moving fluid, techniques for extracting quantitative data didn’t emerge until much later.  Advanced optics such as lasers and florescent particles created bright and easily imaged particles.  Better resolution and high-speed cameras allowed these images to be accurately captured.  Finally, better computer software enabled huge amounts of this data to be analyzed simultaneously.  The Von Karman Institute in Brussels first developed these techniques in the early 1980s[PIV 11-13].
+
+\section{Format}
+
+	This thesis has two main portions.  The first is the experimental section, where applied forcing to a thin layer of fluid and used Particle Image Velocimetry to analyze the resulting flow patterns.  The second portion is entirely computational.  I wrote a code in \textit{Mathematica} to model a two-dimensional fluid system using several different techniques.  These two portions represent very different ways to deal with a nonlinear system.  Each method has strengths and weaknesses, and together should give a more complete picture of Kolmogorov flow.
+
+	In Chapter 2, Theory, I go over the governing equations and concepts of fluid dynamics, the method I'm using to generate turbulence in my experiment.  In Chapters 3 and 4 I go into detail about the experimental and numerical methods I used.  In 3 I explain the techniques used in Particle Image Velocimetry to map out a fluid flow, describe the specific setup I used.  In 4 I talk about code I wrote, its limitations, and how this approximates a flow.  Chapter 5 contains an analysis of the experimental data and results, as well as the numerical solutions and possible sources of error.  Finally, Chapter 6 concludes my thesis by summarizing the important results and possible suggestions to expand and improve this project.
+
+	
+	
