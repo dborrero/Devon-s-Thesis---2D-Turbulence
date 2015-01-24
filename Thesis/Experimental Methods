@@ -1,0 +1,104 @@
+   \chapter{Experimental Methods}
+	% The three lines above are to make sure that the headers are right, that the intro gets included in the table of contents, and that it doesn't get numbered 1 so that chapter one is 1.
+\section{Experimental Concepts}
+
+	Although 2-dimensional fluids are impossible in nature, they can be modeled by thin fluid layers, like our atmosphere or a thin layer of fluid in a box.  For practical reasons, I'm using a thin layer of fluid in a box.  This section describes a few basic concepts necessary for this experiment.  First is the forcing method.  The most common ways to apply a force to a fluid are with pressure, friction and electromagnetism.  Pressure is used mainly in experiments involving 3-dimensional flows through pipes.  Friction is the driving force of Taylor-Couette flow.  The problem I'm working with requires a more complicated, sinusoidal forcing, so using an EM force is ideal.
+	
+	This method is based on the Lorentz force.  This is the basic electromagnetic principle that a charged particle moving through a magnetic field experiences a force equal to the velocity times the magnetic field in the direction perpendicular to both of these. This is illustrate by the Lorentz Equation.  The current form of the Lorentz equation gives the force applied to a continuous charge distribution moving at a uniform velocity (a current), and is written 
+
+\begin{equation}
+F = J \times B.
+\label{Lotentz}
+\end{equation}
+
+	Here, J is the current density (equal to the charge density times velocity) and B is the magnetic field.  The direction of the force is easily found by calculating the cross product, or just by using the right hand rule.  From this setup, it is clear that the force will in be in sinusoidal, anti-parallel stripes, as depicted in Figure \ref{fig:sinspace}.
+
+\begin{figure}
+ \centering
+\includegraphics[scale=.75]
+{Figs/Sinspace}
+\caption{A picture of the forcing pattern.  It is sinusoidal in space in the x-direction, and constant in the y-direction.}
+\label{fig:sinspace}
+\end{figure}
+
+	There is also significant friction between the fluid and the bottom of the tray.  One way to get around this is to put a layer of denser, hydrophobic liquid between the fluid and the tray, as done in ***.  **What does not doing this do to my results??
+
+	The final important concept is the Reynolds number, a parameter **cite original paper, talk about Reynolds numbers.
+
+
+\section{Setup and Data Collection}
+
+
+	The setup I used is based off the one described in Kelley and Ouellette's paper \cite{Kelley2011}.  Figure \ref{fig:setupdrawing} shows a diagram of my experimental setup, the main elements of which are described below.
+	
+\begin{figure}[h]
+ \centering
+\includegraphics[width=0.95\linewidth]
+{Figs/kflow.pdf}
+\caption{The basic experiment plan.  The magnets are arranged in rows of alternating polarity under the tray, and the copper diodes are connected to a DC power source.}
+\label{fig:setupdrawing}
+\end{figure}
+
+	I used circular neodymium-iron-boron grade N52 magnets.  These magnets have a diameter of 12.7 mm and a thickness of 3.18 mm **Confirm this.  The Magnetic field at the surface is 0.3 T (/pm ***).  The magnets are held in a grid made of two sheets of *** thick acrylic.  With our mechanist, Jay Ewing's help, I laser cut circles into the topmost sheet from an Adobe Illustrator file, and epoxied them together, creating a magnet holding grid.  The center-spacing between grid points is 19 mm***.  I then arranged the magnets into the grid in stripes of alternating polarity, covering finished rows with thin strips of painters' tape.  The fluid tray was also made using the laser cutter and sealant (entirely by Jay).  We didn't worry about tray dimensions, making it much bigger than the magnet grid.  **See if this is significant***.  The bottom was painted black for better particle visibility.  The electrodes are two pieces of copper bent over opposite sides of the tray, and connected to a **** DC power source using alligator clips.  The experimental setup is shown in figure \ref{fig:setuppic}.  
+
+	
+	The fluid is a mixture of water, Copper Sulfate (to make it more conductive), and Glycerol (to make it more viscous).  Our solution is $10\%$ $\text{CuSO}_{\text{4}}$ by mass and $20\%$ Glycerol by volume as described in \cite{Kelley2011}.  To get quantitative measurements out of this setup, I needed to put tracer particles into the fluid, record their movements, and track them using Matlab.  The particles I used are S60 microscopic glass bubbles from M3.  To collect data I recorded the particles' motion at different Reynolds numbers.  I varied the Reynolds numbers by changing the electrical current, since this is much easier to vary than the viscosity.  The data was recorded using an **** hd camcorder on a ring stand positioned *** cm over the fluid.  I wrapped black clothe around reflective surfaces to reduce glare.  
+	
+\begin{figure}
+ \centering
+\includegraphics[scale=.1]
+{Figs/setup.jpg}
+\caption{A photograph of my experimental setup.  The fluid and tracking particles are shown to the left of the tray.}
+\label{fig:setuppic}
+\end{figure}	
+
+	This setup could definitely be improved by using better cameras, light sources and florescent particles, but all of these things are expensive and not entirely necessary the type of results I'm looking for.
+
+
+
+
+
+
+
+
+\section{Tracking Methods}
+% Double spacing: if you want to double space, or one and a half 
+% space, uncomment one of the following lines. You can go back to 
+% single spacing with the \singlespacing command.
+% \onehalfspacing
+% \doublespacing
+	Overall, creating the fluid flow you want is the less complicated part.  The real challenge of experimental fluid dynamics is extracting data from a flow.
+	
+	There are a few different adjustable parameters we can change in a particle tracking setup to get the best possible results.  Different flow systems require different conditions for particle tracking to be effective.  Some important parameters include particle size, material the particles are made of, density of particles (with respect to each other), the particles' effectiveness at scattering light, the lighting itself, and the quality of the recording device.  
+
+	Luckily, in a 2-dimensional fluid flow, a particles' material is much less of a concern, making it much easier to find good particles.  Since I'm only tracking the surface of the flow, as long as my particles are less dense than the fluid, they will stay on the surface.  
+
+	In all particle tracking systems, smaller particles, better image quality, and better lighting/more luminescent particles result in more accurate tracking.  Small particles more faithfully follow a flow without interfering with the motion of the fluid [cite PIV].  On the other hand, particles also must be big enough to show up on camera.  With regards to lighting and image quality, as explained in \ref**setup, these things could definitely be improved to achieve more precise results.  
+
+	The final criteria for particle tracking, density of particles within the fluid, depends on the tracking technique being used.  In traditional particle tracking, a program was designed to follow individual particles.  The drawback of this method is that it requires a very high image frame rate, low velocity, or low particle density.  This is because individual particles are indistinguishable.  If a particle moves too far from its initial position between frames, the computer has no way of distinguishing it from another particle that moved towards its previous location.  This means particles must be sparser and slower than PIV.
+
+	Particle Image Velocimetry, or PIV, is a newer and system that allows us to track more particles more easily than traditional particle tracking methods.  PIV software divides each image into tiny ``interrogation areas,'' each consisting of a tiny group of particles.  These groups are distinguishable, and move fairly homogeneously from frame to frame.  PIV software tracks each of these configurations using statistical methods to determine the overall motion of the fluid.
+\bigskip
+PIV Statistical Methods
+
+Get into Ch 3 of PIV book.  Tricky stuff...
+\bigskip
+
+	The statistical methods themselves are pretty complex.  A complete description can be found in chapter 3 of \cite{PIV}, which is based off of an even more in depth description from \cite{Westerweel}.  The basic technique involves first identifying each particle in an image intensity field and creating an autocorrelation function for each interrogation area in each frame, then cross-correlating two different frames.  In theory, creating the image intensity field is fairly simple.  The computer would just need to pick out infinitely bright particles on a dark background.  In reality, there's a lot more to this.  To mathematically represent an intensity distribution, A program must take into account both the input image, and the point spread function.  The point spread function is the function that describes how a single point spreads out when imaged.  For an ideal, well focused lens, the point spread function is the Airy function \cite{PIV} (p 48, 81), which looks similar to (and is commonly approximated as) a Gaussian function.  PIV software can also take into account defects in the lens and sensors.  The computer can then represent the particle locations by delta spikes, and associate an x and y coordinate with each particle.
+	
+	Next a PIV program would find the autocorrelation of the intensity field for a given interrogation area.  The autocorrelation includes the mean intensities of the delta spikes, and the mean location.  Correlating the different delta spikes also generates noise around the new, centered spike.  What this is doing is essentially combining the locations and intensities of the individual particles to give each interrogation area a unique `signature' that can be tracked.  These correlations are made in such a way that even when some particles exit the interrogation area in the second frame, the movement of the centered spike can be measured by comparing the remaining points in the area with all of the original points.
+	
+	
+	
+
+
+\bigskip
+
+	The specific program we used is called Prana, a free, open-source particle tracking program that runs on Matlab.  This program was originally developed at the AEThER Laboratory at Virginia Tech.  It accepts consecutive gray-scale frames of a video, and returns a velocity field.  To get our raw videos into a form the software would accept, I cropped each video to a 2-3 second section in the middle (to avoid the camera-shake accosited with turning on and off the camera), and ran it through a simple \textit{Mathematica} code the extract and Grayscale the first few frames.  This code can be found in Appendix B.  Daniel ran all of sets of frames through the code, each of which took about 15 minutes**?**.  For every set of data, the program gave an enourmous flattened matrix for the x and y velocities at each point.  I calculated the rms of the x-velocities in Mathematica.  I repeated this for each electrical current. 
+
+	Using the x-velocity rms makes sense, since in the laminar solution, this value will be 0 (fluid is only moving up and down in the y-direction).  As the stable solution moves away from the laminar state, the x-velocities increase.
+
+
+
+
+	
