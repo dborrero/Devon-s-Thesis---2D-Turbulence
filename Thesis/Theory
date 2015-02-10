@@ -1,0 +1,110 @@
+   \chapter{Theory}
+	% The three lines above are to make sure that the headers are right, that the intro gets included in the table of contents, and that it doesn't get numbered 1 so that chapter one is 1.
+
+
+
+\section{The Navier-Stokes Equations}
+% Double spacing: if you want to double space, or one and a half 
+% space, uncomment one of the following lines. You can go back to 
+% single spacing with the \singlespacing command.
+% \onehalfspacing
+% \doublespacing
+	
+	The Navier-Stokes equations are the governing equations of fluid dynamics.  They were developed independently by M. Navier and G. Stokes near the beginning of the 19th century \cite{CFD p 31}.  These equations are essential to understanding fluid dynamics and are at the very heart of the my code.  This derivation loosely follows the Navier-Stokes derivation found in chapter 2 of \cite{CFD}.  I'm making this derivation as short and sweet as possible, since it's more of an important stepping stone to understanding the numerical theory.  
+	
+	The governing equations of fluid dynamics are based on three fundamental principles.  These are the conservation of mass, the conservation of momentum, and the conservation of energy.  I'm not including the derivation for the energy equation, since it isn't necessary to the Navier-Stokes equation found in my code, but a full, more detailed derivation can be found in \cite{CFD}. The Navier-Stokes equations take the place of Newton's laws for fluid dynamics, and are actually based on applying Newton's second law to an infinitesimal fluid element.
+	
+\subsection{Tools and Concepts}	
+
+	This brings us to the first concept we'll need to derive and understand these equations: The infinitesimal fluid element.  with rigid bodies, a on one side moves the entire body as a single unit.  This is obviously not the case with fluids.  The way we can deal with fluids is to divide the them into lots of minuscule boxes.  There are two different ways to do this.  
+	
+	The first method is finite volume control.  For this method, we're looking at a tiny control volume fixed in space, with fluid flowing freely through it.  The second method is the Infinitesimal fluid element.  Here, we're looking at a tiny box of fluid as it flows around in time.  I'll be primarily talking about the infinitesimal fluid element, but the distinction between the two will be important later.    
+		
+	%Substantial deriv is acceleration of a chunk
+	The next tool we'll need is the substantial derivative.  This is really just the traditional derivative (as opposed to the partial derivative).  This is the derivative we would use for the infinitesimal fluid element.  For one of these chunks of fluid, as it moves through our external reference frame, the (x,y) position, and time are all changing.  This means something like pressure, temperature, or velocity (each functions of position and time) moving from time $t_{1}$ to time $t_{2}$ can be written
+	
+\begin{equation}
+T(x_{1},y_{1},t_{1}) \longrightarrow T(x_{2},y_{2},t_{2}).
+\end{equation} 
+
+Where the large $T$ is temperature, $x_{1}$ and $y_{1}$ are the x and y coordinates at $t_{1}$, and $x_{2}$ and $y_{2}$ are the x and y coordinates at $t_{2}$.  From here we can write a first order Taylor approximation for point 2 using point 1.
+
+\begin{equation}
+T_{2} = T_{1}+ \left(\frac{\partial T}{\partial x} \right)_{1} (x_{2} - x_{1})+ \left(\frac{\partial T}{\partial y} \right)_{1} (y_{2} - y_{1})+ \left(\frac{\partial T}{\partial t} \right)_{1} (t_{2} - t_{1}).
+\end{equation} 
+
+	Rearranging this yields,
+	
+\begin{equation}
+\frac{T_{2} - T_{1}}{t_{2} - t_{1}} = \left(\frac{\partial T}{\partial x} \right)_{1} \frac{x_{2} - x_{1}}{t_{2} - t_{1}} + \left(\frac{\partial T}{\partial y} \right)_{1} \frac{y_{2} - y_{1}}{t_{2} - t_{1}}+ \left(\frac{\partial T}{\partial t} \right)_{1}.
+\end{equation} 
+
+	Now, taking the limit as time goes from $t_{2}$ to $t_{1}$ of each piece with $t_{2} - t_{1}$ in the denominator yields (by the definition of the derivative);
+	
+\begin{equation}
+\frac{D T}{D t} = v_{x} \frac{\partial T}{\partial x} + v_{y} \frac{\partial T}{\partial y} + \frac{\partial T}{\partial t}.
+\end{equation} 
+
+	Where $\frac{D}{D t}$	is the definition of the substantial derivative.  This could be extended into as many dimensions as we need.  My thesis only deals with 2, but it's easy to write the substantial derivative more generally as
+	
+\begin{equation}
+\frac{D}{D t} \equiv \frac{\partial}{\partial t} + \left( \vec{v} \cdot \nabla \right).
+\end{equation}	
+
+This is enormously useful for looking at properties of the infinitesimal fluid element.  Besides being used to find the element's pressure and temperature as it moves through time, the substantial derivative is what we need to define the acceleration of the infinitesimal fluid element.  
+
+****Put in accel EQ****	
+	
+\subsection{Conservation of Mass}
+
+	With the concepts and tools above we can start applying some basic physics principles to fluids.  The first thing we'll deal with is conservation of mass.  For this principle, I'm using the first method for looking at fluid elements; the finite volume control.  Both methods could yield useful equations, but the tiny box fixed in space with fluid passing through it will give the conservative form of the mass continuity equation, which is the form we'll need it n later.  
+
+	So, picturing a tiny, box fixed within the fluid, and assuming mass is conserved, I can confidently say that the rate of change of the mass within the box will be equal to the amount of mass exiting (or entering) the box through the surface.  This must be the case, since there aren't any magical sources or sinks of mass inside our tiny cube.
+	
+	When written mathematically, this statement becomes
+
+\begin{equation}
+\text{Change in mass} = - \frac{\partial}{\partial t}  \oint \oint \oint \rho  \,  dV
+\label{CM.masschange}
+\end{equation}
+	
+	
+\begin{equation}
+\text{flow of density through surface} = \oint \oint \rho \vec{v} \cdot \vec{d}S
+\label{CM.surfaceflow}
+\end{equation}
+
+	Here, $\vec{v}$ is the velocity vector, with a component in each direction at each point in space, and $\rho$ is the density, with a scalar value at each point in space.  In \ref{CM.masschange}, we're integrating over the an enclosed volume.  In \ref{CM.surfaceflow}, we're integrating over a closed surface, with the directional $\vec{d}S$ pointing perpendicular out of each side.  Equation \ref{CM.surfaceflow} can be rewritten as a volume integral from the vector divergence theorem;
+	
+\begin{equation}
+ \oint \oint \rho \vec{v} \cdot \vec{d}S= \oint \oint \oint \nabla \cdot \rho \vec{v} \, dV.
+\label{CM.surfaceflowdiv}
+\end{equation}
+
+Now, setting these two expressions equal to each other as explained above, rearranging, and combining the volume integrals yields;
+
+\begin{equation}
+\oint \oint \oint \left[\frac{\partial \rho}{\partial t} + \nabla \cdot \rho \vec{v} \, \right] dV = 0.
+\label{CM.consintegral}
+\end{equation}
+
+This is essentially saying that the change of mass withing some volume is equal to the total divergence of the density inside that volume.  From \ref{CM.consintegral}, it's clear that
+
+ 
+\begin{equation}
+[\frac{\partial \rho}{\partial t} + \nabla \cdot \rho \vec{v} = 0.
+\label{MassCont}
+\end{equation}
+
+This is the  mass continuity equation in conservative form.
+	
+\subsection{Conservation of Momentum}	
+	%Momentum: F=ma
+	
+	This is the piece that gets us the primary Navier-Stokes equation, the one at the heart of my computer code.
+	
+\subsection{Conservative Form and the Incompressibility Assumption}	
+	%conservative form
+	
+	%incompressible
+ 
