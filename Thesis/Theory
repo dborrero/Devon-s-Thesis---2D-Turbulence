@@ -63,7 +63,7 @@ This follows from the definition of the substantial derivative, since the accele
 
 	
 \subsection{Conservation of Mass}
-
+**I may delete this subsection, since incompressibility makes it redundant.
 	With the concepts and tools above we can start applying some basic physics principles to fluids.  The first thing we'll deal with is conservation of mass.  For this principle, I'm using the first method for looking at fluid elements; the finite volume control.  Both methods could yield useful equations, but the tiny box fixed in space with fluid passing through it will give the conservative form of the mass continuity equation, which is the form we'll need it n later.  
 
 	So, picturing a tiny, box fixed within the fluid, and assuming mass is conserved, I can confidently say that the rate of change of the mass within the box will be equal to the amount of mass exiting (or entering) the box through the surface.  This must be the case, since there aren't any magical sources or sinks of mass inside our tiny cube.
