@@ -49,11 +49,18 @@ T_{2} = T_{1}+ \left(\frac{\partial T}{\partial x} \right)_{1} (x_{2} - x_{1})+ 
 	
 \begin{equation}
 \frac{D}{D t} \equiv \frac{\partial}{\partial t} + \left( \vec{v} \cdot \nabla \right).
+\label{expsub}
 \end{equation}	
 
-This is enormously useful for looking at properties of the infinitesimal fluid element.  Besides being used to find the element's pressure and temperature as it moves through time, the substantial derivative is what we need to define the acceleration of the infinitesimal fluid element.  
+This is enormously useful for looking at properties of the infinitesimal fluid element.  Besides being used to find the element's pressure and temperature as it moves through time, the substantial derivative is what we need to define the acceleration of the infinitesimal fluid element.  For a moving fluid element, the acceleration in the x-direction can be written 
 
-****Put in accel EQ****	
+\begin{equation}
+a_{x} = \frac{D v_{x}}{D t}.
+\label{infaccel}
+\end{equation} 
+
+This follows from the definition of the substantial derivative, since the acceleration of a box of fluid is the rate of change of velocity for our fluid element moving through time and space.
+
 	
 \subsection{Conservation of Mass}
 
@@ -92,7 +99,7 @@ This is essentially saying that the change of mass withing some volume is equal 
 
  
 \begin{equation}
-[\frac{\partial \rho}{\partial t} + \nabla \cdot \rho \vec{v} = 0.
+\frac{\partial \rho}{\partial t} + \nabla \cdot \rho \vec{v} = 0.
 \label{MassCont}
 \end{equation}
 
@@ -101,10 +108,191 @@ This is the  mass continuity equation in conservative form.
 \subsection{Conservation of Momentum}	
 	%Momentum: F=ma
 	
-	This is the piece that gets us the primary Navier-Stokes equation, the one at the heart of my computer code.
+	This is the piece that gets us the Navier-Stokes equation we're looking for; the fluid momentum equation. This is the equation at the heart of my computer code. To derive this, I'm applying Newton's Second Law to the infinitesimal moving fluid element.  Applying Newton's law in just the x-direction for now yields 
 	
-\subsection{Conservative Form and the Incompressibility Assumption}	
+\begin{equation}
+F_{x} = m a_{x}.
+\label{Newton2x}
+\end{equation}
+Here, $F_{x}$ is the total force in the x-direction, $m$ is the mass of the fluid element, and $a_{x}$ is the acceleration of the fluid element in the x-direction.
+
+	Dealing with only the left hand side for now, the total force moving a fluid element in the x direction will be equal to the body force on the element plus the surface forces from the flow around it.  The body force is the force pulling on each molecule of the fluid.  This could be something like gravity, pulling down on each particle, or an electromagnetic force like the one in my experiment.  Since it affects each particle, it must be proportional to the density, and can therefore be represented in 2 dimensions as a vector with the x-component
+	
+\begin{equation}
+F_{x \, body} = \rho f_{x} \, dx dy.
+\label{fbody}
+\end{equation}  
+	
+	The surface force can be further divided into shear, normal, and pressure surface forces.  A normal surface force in the x direction would be a force acting on the y-z plane of the element (or just the y-direction side for a 2-dimensional fluid element like the one shown in figure \ref{fig:forces}). This force would be perpendicular to the plane, pushing or pulling the box of fluid by using viscous suction.  In contrast, a shear force in the x-direction will be a force in the x-direction acting on the x-y and x-z planes (of a 3-dimensional fluid element) through viscous friction.  These forces act in the the directions shown in figure \ref{fig:forces}, with the $y=0$ arrow pointing left and the $y = dx$ arrow pointing right.  This is just to follow the convention that a positive velocity gradient increases in the positive direction.  This means the corresponding top-bottom shear force will be the top moving right and the bottom moving left relative to the top of the fluid element.  Finally, the pressure surface force pushes inwards on the fluid element from both sides.  All of these forces are shown for a 2-dimensional fluid element in figure \ref{fig:forces}.
+	
+	%***insert figure of forces
+	
+Notice that each of the surface forces above acts on opposite sides of the fluid element, so naturally the net surface force will depend on the difference between the two sides, and therefore the gradient of pressure and velocity in our fluid.
+	
+
+\begin{align*}
+\centerline{\text{Total surface force} \, =}   \\ 
+\\
+\underbrace{\left[ p - \left( p + \frac{\partial p}{\partial x} dx \right) \right] dy}_{\text{pressure difference}} +
+\underbrace{\left[ \left( \tau_{xx} + \frac{\partial \tau_{xx}}{\partial x} dy \right) - \tau_{xx} \right] dx}_{\text{normal difference}} + 
+\underbrace{\left[ \left( \tau_{yx} + \frac{\partial \tau_{yx}}{\partial y} dy \right) - \tau_{yx} \right] dx}_{\text{shear difference}}.
+\end{align*}
+
+Where $\tau_{ij}$ is the force in the j direction on the surface perpendicular to the i axis.  After canceling and combining with the body force, this becomes
+
+\begin{equation}
+F_{x} = \left[ - \frac{\partial p}{\partial x} + \frac{\partial \tau_{xx}}{\partial x} +  \frac{\partial \tau_{yx}}{\partial y} + \rho f_{x} \right] \, dx dy.
+\label{Fx}
+\end{equation}
+
+Combining this, equation \ref{infaccel} and the mass of a 2-dimensional infinitesimal fluid element, $m = \rho \, dx dy$, Newton's second law (in the x-direction) becomes
+
+\begin{equation}
+ - \frac{\partial p}{\partial x} + \frac{\partial \tau_{xx}}{\partial x} +  \frac{\partial \tau_{yx}}{\partial y} + \rho f_{x} = \rho \frac{D v_{x}}{D t}.
+\label{fluidN2}
+\end{equation}
+
+
+	This is the Navier-Stokes momentum equation in conservative form, which will govern the motion of the fluid in my setup.  All that's left now is to add in the stress tensor terms, apply some assumptions we can make about our fluid, and rearrange the equation into an easier to use form. 
+	 
+\subsection{Assumptions and rearranging}	
+
+	The first assumption we can make is that the fluid I'm using is Newtonian.  This means the shear stress is proportional to the velocity gradients.  For there fluids, Stokes (experimentally?  find source) the tensor elements we need are
+	
+\begin{equation}
+\tau_{xx}= \lambda \nabla \cdot \vec{v} + 2 \mu \frac{\partial v_{x}}{\partial x}
+\label{stresstensorxx}
+\end{equation}
+and
+\begin{equation}
+\tau_{yx} = \mu \frac{\partial v_{y}}{\partial x} + \mu \frac{\partial v_{x}}{\partial y},
+\label{stresstensorxy}
+\end{equation}
+where $\mu$ is a constant associated with the viscosity of the fluid.
+
+	We can also assume that the fluid we're using is incompressible.  This means that the divergence out of or into a fluid element is zero, or $\nabla \cdot \vec{v} = 0$.  This simplifies the $\tau_{xx}$ tensor term.  Putting these functions into the form presented in \ref{fluidN2} yields 
+	
+\begin{equation}
+\frac{\partial \tau_{xx}}{\partial x} +  \frac{\partial \tau_{yx}}{\partial y} = 2 \mu \frac{\partial^{2} v_{x}}{\partial x^{2}} + \mu \frac{\partial^{2} v_{y}}{\partial x \partial y} + \mu \frac{\partial^{2} v_{x}}{\partial y^{2}} 
+\label{stressform}
+\end{equation}	
+	
+Which can be rearranged and rewritten as
+	
+\begin{equation}
+\mu \left( \frac{\partial^{2} v_{x}}{\partial x^{2}} + \frac{\partial^{2} v_{x}}{\partial y^{2}} \right) + \mu \frac{\partial }{\partial x} \left( \frac{\partial v_{x}}{\partial x}+\frac{\partial v_{y}}{\partial y} \right) = \mu \nabla^{2} v_{x} + \frac{\partial}{\partial x}\left( \nabla \cdot v_{x} \right).
+\label{simpstress}
+\end{equation}
+
+Since the divergence term will have a y-component as well, we can eliminate it by enforcing incompressibility. This leaves only the Laplacian term.
+	
+	Plugging this (\ref{simpstress}) and Equation \ref{expsub} into Equation \ref{fluidN2}, and dividing by ur densisty, $\rho$, gives
+	
+\begin{equation}
+\frac{\partial v_{x}}{\partial t} + (\vec{v} \cdot \nabla)v_{x} = - \frac{1}{\rho}\frac{\partial p}{\partial x} + \mu \nabla^{2} v_{x} + f_{x}.
+\label{newNS}
+\end{equation}
+
+Finally, this can be applied to each dimension of vector $\vec{v}$ simultaneously by writing it as
+	
+%*Stokes experimentally obtained the taus (for a Newtonian fluid)
+%rearrange stufff (see notebook)
+
 	%conservative form
 	
 	%incompressible
+    
+    
+    
+
+
+    
+    
+    
+\begin{equation}
+\frac{\partial \vec{v}}{\partial t} + (\vec{v} \cdot \nabla) \vec{v} = - \frac{1}{\rho} \nabla p + \mu \nabla^{2} \vec{v} + \vec{f},
+\label{NavierStokes}
+\end{equation}
+   the final form of the Navier-Stokes momentum equation. 
+    
+    
+    
+    
  
+\section{Numerical Theory}
+
+I'm simulating my 2-dimensional Kolmogorov flow using two different programs in \textit{Mathematica}.  ***Explain where the programs came from, ``a modified version on...'' or ``based off...''
+
+
+\subsection{Discrectization and finite difference approximations}	
+    
+    In order to get a computer to simulate a fluid dynamics problem, there are a few concepts we need.  These methods will allow the computer to approximate and solve complex functions to an arbitrary degree of accuracy.  Firstly, discretization is an essential concept around which all of my computation is based.  The Navier-Stokes equation is unsolvable analytically, so in order to solve these equations on our 2-dimensional surface, we need to divide it into a grid of discrete points.  More points will give an answer of higher resolution, but will make the code more computationally demanding.  The positions on the grid are represented as a an n by n matrix, which will be solved separately at each point.
+    
+    The next tool I'm using is the finite difference approximation for derivatives.  In the most basic sense, a derivative is the slope of a function at a single point.  To find this, we're using a Taylor expansion to approximate a point just past $x_{0}$,
+    
+%Taylor series    
+\begin{equation}
+f(x_{0}+dx) = f(x) + \frac{d}{d x} f(x) dx + \text{higher order terms},
+\label{taylorderivative}
+\end{equation}
+    
+From this we can approximate the derivative as 
+
+\begin{equation}
+\frac{d}{d x} f(x) = \frac{f(x_{0}+dx) - f(x_{0})}{dx} - \text{higher order terms},
+\label{taylorderivative}
+\end{equation}
+%deviv eq
+
+Since any continuous function can be represented by a Taylor series of arbitrary accuracy, we can extend these finite difference approximations out to be as accurate as needed.  Generally, the first order approximation is fine.  This is called the finite difference method.  We can use this to calculate first and second partial derivatives in two dimensions based solely off adjacent points.  On our 2-dimensional grid, ignoring higher order terms, the finite difference approximations can be written as
+
+\begin{equation}
+\frac{\partial f_{i,j}}{\partial x} \approx \frac{f_{i+1,j} - f_{i,j}}{dx} 
+\label{fdongrid}
+\end{equation}
+and
+\begin{equation}
+\frac{\partial^{2} f_{i,j}}{\partial x^{2}} \approx \frac{f_{i+1,j} - f_{i,j}}{dx} 
+\label{fdongrid}
+\end{equation}
+
+where $f_{ij}$ represents $f$ for the grid point at the in the $i^{th}$ column (x-coordinate) and the $j^{th}$ row (y-coordinate).  Note that the second derivative is essentially the slope of the slopes on either side of $x_{0}$.  The first derivative can easily be extended out to second order accuracy by averaging the derivatives on either side of $x_{0}$, making it second order accurate;
+
+ \begin{equation}
+\frac{\partial f_{i,j}}{\partial x} \approx \frac{f_{i+1,j}- f_{i-1,j}}{2 dx} .
+\label{fdongrid}
+\end{equation}
+
+These can easily be changed to y partials, or any other partial, by modifying the index associated with that variable ($j$ for the y partial, instead of $i$).
+%\begin{align*}
+%\centerline{\text{Total surface force} \, =}   \\ 
+%\centerline{\text{Total surface force} \, =}   \\ 
+%\\
+%\end{align*}
+
+%\begin{align*} 
+%\frac{\partial f(x,y)}{\partial x} \approx \frac{1}{2}\left[ \frac{f(x+dx,y)-f(x,y)}{dx} + \frac{f(x,y)-f(x-dx,y)}{dx}\right] + \bigcirc^{3} \\
+%\\
+%= \frac{f(x+dx,y)- f(x-dx,y)}{2 dx}
+%\end{align*} 
+    
+
+%and
+%\begin{equation}
+%\frac{\partial^{2} f(x,y)}{\partial x^{2}} = \frac{1}{2}\left[ \frac{f(x+dx,y)-f(x,y)}{dx} + \frac{f(x,y)-f(x-dx,y)}{dx}\right] + \bigcirc^{2} \approx \frac{f(x+dx,y)- f(x-dx,y)}{2 dx}
+%\label{finitedifference2}
+%\end{equation}  
+    
+    
+
+    
+
+	For the time independent code, I extended the accuracy out to fourth order terms in space.  For the time dependent code, which is much more computationally intensive, I left it at first and second order, as is the standard procedure in \cite{Franklin2013}, [cite WPI, MIT, others].
+\subsection{The time-independent solver}
+	The first method I looked at to solve my system was a time-independent solver.  This method relies on the assumption that the flow has reached a stable solution, and therefore is not changing in time.
+
+
+\subsection{The time-dependent solver}
+    
+    
+
