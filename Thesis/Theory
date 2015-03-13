@@ -1,4 +1,4 @@
-   \chapter{Theory}
+    \chapter{Theory}
 	% The three lines above are to make sure that the headers are right, that the intro gets included in the table of contents, and that it doesn't get numbered 1 so that chapter one is 1.
 
 
@@ -64,6 +64,8 @@ This follows from the definition of the substantial derivative, since the accele
 	
 \subsection{Conservation of Mass}
 **I may delete this subsection, since incompressibility makes it redundant.
+
+
 	With the concepts and tools above we can start applying some basic physics principles to fluids.  The first thing we'll deal with is conservation of mass.  For this principle, I'm using the first method for looking at fluid elements; the finite volume control.  Both methods could yield useful equations, but the tiny box fixed in space with fluid passing through it will give the conservative form of the mass continuity equation, which is the form we'll need it n later.  
 
 	So, picturing a tiny, box fixed within the fluid, and assuming mass is conserved, I can confidently say that the rate of change of the mass within the box will be equal to the amount of mass exiting (or entering) the box through the surface.  This must be the case, since there aren't any magical sources or sinks of mass inside our tiny cube.
@@ -239,7 +241,7 @@ f(x_{0}+dx) = f(x) + \frac{d}{d x} f(x) dx + \text{higher order terms},
 From this we can approximate the derivative as 
 
 \begin{equation}
-\frac{d}{d x} f(x) = \frac{f(x_{0}+dx) - f(x_{0})}{dx} - \text{higher order terms},
+\frac{d}{d x} f(x) = \frac{f(x_{0}+dx) - f(x_{0})}{dx} - \text{higher order terms}.
 \label{taylorderivative}
 \end{equation}
 %deviv eq
@@ -253,7 +255,7 @@ Since any continuous function can be represented by a Taylor series of arbitrary
 and
 \begin{equation}
 \frac{\partial^{2} f_{i,j}}{\partial x^{2}} \approx \frac{f_{i+1,j} - f_{i,j}}{dx} 
-\label{fdongrid}
+\label{fdongrid2}
 \end{equation}
 
 where $f_{ij}$ represents $f$ for the grid point at the in the $i^{th}$ column (x-coordinate) and the $j^{th}$ row (y-coordinate).  Note that the second derivative is essentially the slope of the slopes on either side of $x_{0}$.  The first derivative can easily be extended out to second order accuracy by averaging the derivatives on either side of $x_{0}$, making it second order accurate;
@@ -288,11 +290,30 @@ These can easily be changed to y partials, or any other partial, by modifying th
     
 
 	For the time independent code, I extended the accuracy out to fourth order terms in space.  For the time dependent code, which is much more computationally intensive, I left it at first and second order, as is the standard procedure in \cite{Franklin2013}, [cite WPI, MIT, others].
+
 \subsection{The time-independent solver}
-	The first method I looked at to solve my system was a time-independent solver.  This method relies on the assumption that the flow has reached a stable solution, and therefore is not changing in time.
+	The first method I looked at to solve my system was a time-independent solver.  This method relies on the assumption that the flow has reached a stable solution, and therefore is not changing in time.  For this code, I modified a the code from ***Cite Mathematica thing***.  This code was designed to solve the 2-dimensional driven cavity problem.  To make it representative of Kolmogorov flow, I held the moving boundary constant and added a forcing term.  I also generated my own fourth order differential matrices, instead of using a pre-programmed \textit{Mathematica} function.  This code can be found in Appendix A.
+	
+	This code works by breaking the area into a grid of arbitrary resolution.  Each grid-point holds an x and y velocity value, and a pressure value in a stationary reference frame.  The finite difference derivatives expressed above are written at each point, making it a linear combination of grid points around it, which are then combined into n by n matrix operators.  These operators can act on a matrix of variables through matrix multiplication, resulting in a matrix of derivatives.  The code I wrote [Appendix A] generates fourth-order accurate first and second derivative operator matrices, using the centerpoint formula **ref for the middle points, and the appropriate endpoint formulas near the edges. **Talk more about that in the finite derivative section**
+	
+	Since the flow is stable, the Navier-Stokes equation becomes a set of solvable partial differential equations.  
+	
+	From \ref{newNS}, change in the velocity in the x and y directions with respect to time can be written
+	
+\begin{equation}
+-\frac{\partial v_{x}}{\partial t} = v_{x} \left( \frac{\partial}{\partial x} v_{x} \right) + v_{y} \left( \frac{\partial}{\partial y} v_{x} \right) + \left( \frac{\partial}{\partial x} p \right) - \frac{1}{R} \left( \frac{\partial^{2}}{\partial x^{2}} v_{x} + \frac{\partial^{2}}{\partial y^{2}} v_{x}  \right)
+\end{equation}
+and
+\begin{equation}
+-\frac{\partial v_{y}}{\partial t} = v_{x} \left( \frac{\partial}{\partial x} v_{y} \right) + v_{y} \left( \frac{\partial}{\partial y} v_{y} \right) + \left( \frac{\partial}{\partial y} p \right) - \frac{1}{R} \left( \frac{\partial^{2}}{\partial x^{2}} v_{y} + \frac{\partial^{2}}{\partial y^{2}} v_{y}  \right) + f(x).
+\end{equation}
+Where R is the Reynolds number, a constant, $v_{x}$ and $v_{y}$ are n by n matrices of the x and y components of velocity respectively, p is an n by n matrix of pressure terms, and the partial derivatives are the x and y first and second derivative matrices explained above.  In this equation, each variable is non-dimensionalized based on an arbitrary length scale.  In my experiment, this length scale is the separation of magnets, which corresponds to half the period of the sinusoidal forcing.
+
+For a stable solution, $-\frac{\partial v_{x}}{\partial t} = 0$.  This means we're essentially finding the root (zero's) of the right hand side of the equation above.  
+	
+
 
 
 \subsection{The time-dependent solver}
     
-    
-
+ 
