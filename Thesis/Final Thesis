@@ -1,0 +1,1317 @@
+% This is the Reed College LaTeX thesis template. Most of the work 
+% for the document class was done by Sam Noble (SN), as well as this
+% template. Later comments etc. by Ben Salzberg (BTS). Additional
+% restructuring and APA support by Jess Youngberg (JY).
+% Your comments and suggestions are more than welcome; please email
+% them to cus@reed.edu
+%
+% See http://web.reed.edu/cis/help/latex.html for help. There are a 
+% great bunch of help pages there, with notes on
+% getting started, bibtex, etc. Go there and read it if you're not
+% already familiar with LaTeX.
+%
+% Any line that starts with a percent symbol is a comment. 
+% They won't show up in the document, and are useful for notes 
+% to yourself and explaining commands. 
+% Commenting also removes a line from the document; 
+% very handy for troubleshooting problems. -BTS
+
+% As far as I know, this follows the requirements laid out in 
+% the 2002-2003 Senior Handbook. Ask a librarian to check the 
+% document before binding. -SN
+
+%%
+%% Preamble
+%%
+% \documentclass{<something>} must begin each LaTeX document
+\documentclass[12pt,twoside]{reedthesis}
+% Packages are extensions to the basic LaTeX functions. Whatever you
+% want to typeset, there is probably a package out there for it.
+% Chemistry (chemtex), screenplays, you name it.
+% Check out CTAN to see: http://www.ctan.org/
+%%
+\usepackage{graphicx,latexsym} 
+\usepackage{amssymb,amsthm,amsmath}
+\usepackage{longtable,booktabs,setspace} 
+\usepackage{chemarr} %% Useful for one reaction arrow, useless if you're not a chem major
+\usepackage[hyphens]{url}
+\usepackage{rotating}
+%\usepackage{natbib}
+\usepackage{caption}
+\usepackage{subcaption}
+%\usepackage{esint}
+%\usepackage[times]{mathdesign}
+
+% Comment out the natbib line above and uncomment the following two lines to use the new 
+% biblatex-chicago style, for Chicago A. Also make some changes at the end where the 
+% bibliography is included. 
+%\usepackage{biblatex-chicago}
+%\bibliography{thesis}
+
+% \usepackage{times} % other fonts are available like times, bookman, charter, palatino
+
+\title{An Experimental and Numerical Analysis of 2-Dimensional Kolmogorov Fluid Flows}
+\author{Devon Kesseli}
+% The month and year that you submit your FINAL draft TO THE LIBRARY (May or December)
+\date{May 2015}
+\division{Mathematics and Natural Sciences}
+\advisor{Daniel Borrero}
+%If you have two advisors for some reason, you can use the following
+%\altadvisor{Your Other Advisor}
+%%% Remember to use the correct department!
+\department{Physics}
+% if you're writing a thesis in an interdisciplinary major,
+% uncomment the line below and change the text as appropriate.
+% check the Senior Handbook if unsure.
+%\thedivisionof{The Established Interdisciplinary Committee for}
+% if you want the approval page to say "Approved for the Committee",
+% uncomment the next line
+%\approvedforthe{Committee}
+
+\setlength{\parskip}{0pt}
+%%
+%% End Preamble
+%%
+%% The fun begins:
+\begin{document}
+
+  \maketitle
+  \frontmatter % this stuff will be roman-numbered
+  \pagestyle{empty} % this removes page numbers from the frontmatter
+
+% Acknowledgements (Acceptable American spelling) are optional
+% So are Acknowledgments (proper English spelling)
+    \chapter*{Acknowledgments}
+	Thanks to all of the people who guided me though this process, and helped me get here in the first place.  First to Daniel Borrero, for leading me through the most turbulent sections, and Reed's extremely helpful and inspiring faculty and staff.  Also to my parents and Rory, who backed me up every step of the way.  Finally to my friends on this coast and the other one, who make everything worth battling for.
+	
+
+% The preface is optional
+% To remove it, comment it out or delete it.
+ %   \chapter*{Preface}
+%	This is an example of a thesis setup to use the reed thesis document class.
+
+    \tableofcontents
+% if you want a list of tables, optional
+    \listoftables
+% if you want a list of figures, also optional
+    \listoffigures
+
+% The abstract is not required if you're writing a creative thesis (but aren't they all?)
+% If your abstract is longer than a page, there may be a formatting issue.
+    \chapter*{Abstract}
+	
+	We studied the effect of shear forces in a two-dimensional fluid flow experimentally and computationally by forcing fluid in a sinusoidal pattern known as Kolmogorov flow.  Both the experimental and numerical data show the expected qualitative change in behavior, with the flow changing from the laminar solution to a lattice of interlocking vortices as the Reynolds number is increased.  Experimentally, we modeled the flow by electromagnetically forcing a thin layer of fluid.  We extracted information about the flow using particle image velocimetry, and found the bifurcation to occur at a critical Reynolds number of 85.  This result agrees reasonably well with similar experiments, which have yielded critical Reynolds numbers of 61 \cite{Kelley2011} and 70 \cite{Swinney1999}.  Significant error is caused by  the friction between the working fluid and the bottom of the tray.  Numerically, we developed two codes, one time-independent and the other time-dependent.  Both successfully demonstrated the initial bifurcation.  Using the time-dependent code, we simulated the Kolmogorov flow in both a rigid box with no slip boundary conditions, and in a periodic cell.  From these simulations, we observed the qualitative motion of the fluid, and created bifurcation diagrams, both of which showed a strong correlation to the experimental data.
+	
+%	\chapter*{Dedication}
+%	You can have a dedication here if you wish.
+
+  \mainmatter % here the regular arabic numbering starts
+  \pagestyle{fancyplain} % turns page numbering back on
+
+%The \introduction command is provided as a convenience.
+%if you want special chapter formatting, you'll probably want to avoid using it altogether
+
+    \chapter*{Introduction}
+         \addcontentsline{toc}{chapter}{Introduction}
+	\chaptermark{Introduction}
+	\markboth{Introduction}{Introduction}
+	% The three lines above are to make sure that the headers are right, that the intro gets included in the table of contents, and that it doesn't get numbered 1 so that chapter one is 1.
+
+% Double spacing: if you want to double space, or one and a half 
+% space, uncomment one of the following lines. You can go back to 
+% single spacing with the \singlespacing command.
+% \onehalfspacing
+% \doublespacing
+	
+	Fluid dynamics is a vast and well-storied branch of physics that has progressed a huge amount in the last century.  In addition to physics, it is a field of interest for both engineering and mathematics.  Fluid dynamics encompasses both liquid and gas flows, making it useful in many engineering problems, from aerodynamics to fluid cooling mechanisms.  The governing equations of fluid dynamical systems are nonlinear, making them interesting and incredibly difficult mathematical problems, with chaotic and turbulent solutions.
+
+	In this project I experimentally and computationally model 2-dimensional fluid flows.  While a 2-dimensional fluid cannot actually exist in our 3-dimensional universe, solving 2-dimensional fluid dynamics problems can be surprisingly useful.  Systems such as Earth's oceans and atmosphere, or just a thin layer of fluid in the lab can often be accurately approximated as 2-dimensional systems owing to the fact that their area is many times greater than their depth.  I chose to work with a 2-dimensional thin fluid layer because it is much easier to work with than a 3-dimensional system.  Experimentally, a 2-dimensional system enables me to place and view tracer particles on the surface instead of mixed throughout the fluid.  Computationally, 2-dimensional systems are also far easier to model, requiring a simpler code, and significantly less computational power.  This allowed me to write a program that I could run on a regular personal computer.
+
+
+	  The system I worked with is called a 2-dimensional Kolmogorov flow.  This system, first studied by Soviet physicist and mathematician A. N. Kolmogorov, is defined by a sinusoidal forcing pattern along one axis, and no forcing along the other.  In an $x$-$y$ coordinate system, this is described by the equation
+\begin{equation}
+\vec{f}(x) = A \sin{(b x)} \hat{y},
+\label{forcing}
+\end{equation}
+ as shown by the vectors in Figure \ref{fig:sinspace}, where $A$ is the amplitude of the forcing, $b$ is its spatial frequency.
+	  
+	  This creates anti-parallel bands of flow, which exert a shear force on one another.  The magnitude of this shear is determined by the forcing strength and viscosity of the fluid, which are both captured in the Reynolds number.  The Reynolds number is a constant that arises in the governing equations of fluid dynamics derived in Chapter 2.  When the Navier-Stokes momentum equation is nondimensionalized, constants are combined into a single value.  Convention defines this as the inverse of the Reynolds number, the independent variable in my experiment.  Physically, the Reynolds Number represents the relative importance of fluid inertia and viscous dampening \cite{Kelley2011}.  Low Reynolds numbers would be assigned to slow moving, viscous fluids like a pipe full of maple syrup, while high Reynolds numbers would correspond to fast, turbulent flows.  As the Reynolds number increases, so does the shear force, resulting in a drastic, qualitative change in the overall movement of the fluid, called a bifurcation.  The Reynolds number is a universal construct, and is essential to describing the behavior of any fluid dynamical system.
+	  
+	  In this experiment I am examining the bifurcations of the Kolmogorov system.  As mentioned above, a bifurcation point is a point where, while varying some parameter, the system experiences some qualitative change of behavior \cite{Strogatz}.  An example of this would be a beam snapping under too much stress, or a population exploding once the number of predators is lowered below a critical value.  These changes represent a shift in the stable state of the system.  Generally, when we observe a system, it is either moving towards, or has arrived at its most stable form.  Because of this, we can describe the long term behavior of a system by studying its fixed points, points at which the system's behavior will stay fixed over time.  Stable fixed points are points where, after a small perturbation, the system will return to its initial state, like the lowest point of a pendulum's swing.  Unstable fixed points are fixed points at which a small perturbation will result in movement away from the fixed point, like a pencil balanced on its point.
+	  
+	  A bifurcation diagram allows us to visualize the behavior of a system as some parameter is varied.  These diagrams are simply plots of fixed points as a function of the independent variable.  Stable fixed points are represented by solid lines, while unstable fixed points are represented as dotted lines.
+	  
+\begin{figure}[h!]
+ \centering
+\includegraphics[width=0.95\linewidth]{./Figs/examplebif.pdf}
+\caption{An example bifurcation diagram for an over-damped pendulum with a rigid rod.  The $x$-axis is some arbitrary parameter that does not affect the fixed points, like size or color of the mass, and the $y$-axis is angle $\theta$.  The pendulum is over-damped, so it will not swing past its lowest point.}
+\label{fig:examplebif}
+\end{figure}	   
+
+	  An extremely simple example would be the mass on a rod example from \cite{Strogatz}.  Here, a mass can slide horizontally on a rigid rod.  The mass is attached to a spring, connecting it to a solid platform directly below it, as pictured in Figure \ref{fig:examplebif}.  The independent variable here is platform height, which can be raised or lowered.  The spring can be compressed or extended about some natural length, $x_{c}$.  With the platform well below $x_{c}$, the only fixed point for the mass is directly above the platform.  Any perturbation from this point will cause it to oscillate and eventually return to the center.  When the platform is raised to within a distance $x_{c}$ from the rod, the system changes.  Now, with the spring compressed, the point directly above the platform is unstable.  While the mass can be balanced at this point, any perturbation will cause it to move outwards and eventually settle at one of the two new stable fixed points on either side of the center.  This is shown in Figure \ref{fig:examplebif}, along with a bifurcation diagram for the system.  This is called a supercritical pitchfork bifurcation similar to the one we are looking for in the Kolmogorov system \cite{Kelley2011, Strogatz, Swinney1999}.  This bifurcation is defined by the fact that at some critical value, a stable fixed point becomes unstable, spawning two new stable fixed points on either side. 
+	  	  
+	  
+	  As stated above, the bifurcation diagram for Kolmogorov flow contains a supercritical pitchfork, where the laminar solution become unstable.  If Reynolds number continues to increase, we get a Hopf bifurcation \cite{Thess1993}, turning from a steady flow to a limit cycle.  Here, the flow moves through a periodic pattern of fixed points, resulting in an oscillating lattice of vortices.  These are fairly common types bifurcation presented in \cite{Strogatz}.  The expected results I am using demonstrate these bifurcations using several different experimental setups that simulate Kolmogorov flow.  Each experiment has frictional damping, a source of error that is difficult to account for, which causes the points at which these bifurcations occur to vary from experiment to experiment.
+	
+	  
+%	In both the experimental and computational portions of my thesis I'll be mainly looking at the first bifurcation that takes place after the laminar solution.  This is a sub-critical pitchfork bifurcation (*find citation), meaning that the initial stable solution?manifold? becomes unstable, *****Need to find expected results bifurcation diagram*** 
+	
+	
+
+\section{Some Numerical Background}
+
+	New techniques for analyzing nonlinear systems paired with a few important technological developments have revolutionized fluid dynamics over the last century.  Fluid dynamical systems are usually difficult to solve analytically, so were effectively unsolvable until computers became powerful enough to provide numerical solutions \cite{Wendt2009}, and experimental measuring tools were precise enough to provide an accurate model of a fluid flow \cite{Raffel2007}.  Below I provide some historical background and basic information about both of these important developments.
+
+	The Navier-Stokes equations are the governing equations of fluid dynamics.  These equations are based off of conservation of mass, energy, and momentum and were derived in the first half of the nineteenth century separately by M. Navier and G. Stokes \cite{Wendt2009}.  These equations were derived by applying these classical conservation laws to an infinitesimal volume of fluid.  These equations are derived in Chapter 2, Theory.
+	
+	Computational Fluid Dynamics became a viable way to analyze fluid systems in the mid 1960s \cite{Wendt2009}.  At this time the Cold war was in full swing and a huge amount of research was going into making better aerodynamics for both Intercontinental Ballistic Missiles and space travel technology.  Before this time, the only options were analytic solutions, which were extremely rare due to the nonlinearity of the Navier-Stokes equations, and physical tests, either outdoors or in giant wind tunnels, which were difficult and impractical, especially to model things moving at supersonic speeds.  Numerical solutions on the other hand are limited only by the amount of information we can input into the computational model and the amount of information a computer can process, both of which have increased enormously over the last fifty years.
+	
+	As part of my study, I developed two different programs in \textit{Mathematica} to solve an idealized 2-dimensional Kolmogorov flow system.  The code is in Appendices A and B, and an explanation of the techniques used can be found in Chapter 2.
+
+
+\section{Some Experimental Background}
+	
+	Experimental fluid dynamics faced similar issues.  The principles of flow visualization through particle tracking have been around since the early twentieth century, when Ludwig Prandtl observed mica particles on the surface of a flowing fluid \cite{Raffel2007}.  Although this allowed him to visualize the patterns in a moving fluid, techniques for extracting quantitative data did not emerge until much later.  Advanced optics such as lasers and fluorescent particles created bright and easily imaged particles.  Better resolution and high-speed cameras allowed these images to be accurately captured.  Finally, better computer software enabled huge amounts of this data to be analyzed simultaneously.  The Von Karman Institute in Brussels first developed these techniques in the early 1980s \cite{Raffel2007}.
+
+\section{Format}
+
+	This thesis has two main portions.  The first is the experimental section, where I applied forcing to a thin layer of fluid and used Particle Image Velocimetry to analyze the resulting flow fields.  The second portion is entirely computational.  I worked on codes in \textit{Mathematica} to model the Kolmogorov system using several different techniques.  These two portions represent very different ways to deal with a nonlinear system.  Each method has strengths and weaknesses, and together should give a more complete picture of Kolmogorov flow.
+	
+	  
+	  The main results I am looking for in both the experimental and numerical sections is a qualitative picture of the bifurcation, with behavior matching those described in \cite{Kelley2011}, \cite{Obukhov1983}, and \cite{Thess1993}.  Once the qualitative behavior of the fluid is confirmed in the numerical and experimental systems, I will look at my data more quantitatively.  For the experimental portion, I will calculate the Reynolds numbers that correspond to different forcing amplitudes, and estimate the Reynolds number at which the system bifurcates.  I can compare this to the results found in \cite{Kelley2011}.  I will analyze the bifurcation both experimentally and numerically, creating a bifurcation diagram for each method.  I will compare these diagrams, and classify the bifurcation as well as possible.
+	  
+
+	In Chapter 1, Experimental Methods, I describe my experimental setup and the techniques I used in detail.  I explain the techniques used in Particle Image Velocimetry to quantitatively measure fluid flow, and describe the specific setup I used to create these flows.  Chapter 2 describes the governing equations and fluid dynamics and computational methods that I used to simulate the experimental flow.  I derive the Navier-Stokes equations that govern the moving fluid, and explain how these are integrated into a computer program and solved numerically.  Chapter 3 describes the results of both the experiment and simulations, and how the data generated in each piece was analyzed.  Finally, Chapter 4 summarizes the important results and sources of error, and discusses possible extensions to expand and improve on this project.
+
+
+   \chapter{Experimental Methods}
+   % \onehalfspacing
+   
+	% The three lines above are to make sure that the headers are right, that the intro gets included in the table of contents, and that it doesn't get numbered 1 so that chapter one is 1.
+\section{Experimental Concepts}
+
+	Although 2-dimensional flows are impossible in nature, they can be modeled by thin fluid layers, like our atmosphere which is much thinner in its vertical extent than in its other two dimensions.  For practical reasons, I am using a thin layer of fluid in a box.  This section describes a few basic concepts necessary for this experiment.  First is the forcing method.  Some common ways to apply a force to a fluid are with pressure, friction, and electromagnetism.  Pressure is used mainly in experiments involving 3-dimensional flows, such as the flow through a pipe.  In the driven cavity problem, a cavity full of fluid is driven by a moving boundary, which uses friction to drag along the nearby fluid.  The problem I am working with requires a more complicated, sinusoidal forcing, described by Equation \ref{forcing}, so using an electromagnetic force is ideal.
+	
+	The method used here is based on the Lorentz force.  This is the basic electromagnetic principle that describes how a charged particle moving through a magnetic field experiences a force equal to the cross product of its velocity and the magnetic field. This is illustrated by the Lorentz equation.  The current form of this equation gives the force, $\vec{F}$, acting on a moving charge distribution, and is written 
+
+\begin{equation}
+\vec{F} = \vec{J} \times \vec{B}.
+\label{Lotentz}
+\end{equation}
+
+	Here, $\vec{J}$ is the current density, a vector equal to the charge density times its velocity, and $\vec{B}$ is the magnetic field vector.  The direction of the force is easily found by calculating the cross product or by using the right hand rule.  From this equation, it is clear that particles in a sinusoidal magnetic field pointing in the z-direction, shown by the red and blue stripes in Figure \ref{fig:sinspace}, will yield a sinusoidal forcing pattern, shown by the vector arrows, when a uniform sheet of current travels from left to right.  The force will in be in sinusoidal, anti-parallel stripes, as depicted in Figure \ref{fig:sinspace}, and described by Equation \ref{forcing}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=.75]{./Figs/Sinspace}
+\caption{A picture of the forcing pattern over the magnetic field.  Blue represents a magnetic field into the page, while red is field out of the page.  The forcing pattern, indicated by the arrows, is sinusoidal and represented by Equation \ref{forcing}.}
+\label{fig:sinspace}
+\end{figure}
+
+	In my computational model, the fluid layer can be made infinitely thin, and its motion across the bottom of the tray frictionless.  In reality, there is significant friction between the fluid and the bottom of the tray, making it difficult to match the experiment to numerical data.  One way to get around this is to put a layer of denser, hydrophobic liquid between the fluid and the tray, as done in \cite{Gtech2014}.  This is important if you are trying to match your experiment very closely to a numerical model.
+
+
+\section{Setup}
+
+	The setup I used is based on the one described by Kelley and Ouellette \cite{Kelley2011}.  It consists of a tray containing a thin layer of electrolyte resting on a configuration of magnets.  Rows of magnets alternating in polarity will create a roughly sinusoidal magnetic field.  An electrical current is driven through the fluid perpendicular to the field, yielding the desired forcing pattern.  Figure \ref{fig:setupdrawing} shows a diagram of this setup, the main elements of which are described below.
+	
+\begin{figure}[h]
+ \centering
+\includegraphics[width=0.95\linewidth]
+{Figs/diagramfixed.pdf}
+\caption{The basic experiment plan.  The magnets are arranged in rows of alternating polarity under the tray, and the copper electrodes are connected to a DC power supply.}
+\label{fig:setupdrawing}
+\end{figure}
+
+	To create the magnetic field, I used circular neodymium-iron-boron grade N52 magnets from K \& J Magnetics.  These magnets have a diameter of 12.7 mm and a thickness of 3.18 mm.  The manufacturer's specifications list the magnetic field at the surface to be 0.3309 T.  The magnets are held in a grid made of two sheets of 3.15 mm thick acrylic.  With our mechanist, Jay Ewing's help, I laser cut circles into the topmost sheet and epoxied the two sheets together, creating a magnet holding grid.  The center to center spacing between grid points is 19 mm.  I then arranged the magnets into the grid in stripes of alternating polarity, covering finished rows with thin strips of painter's tape to keep the magnets in place.  The fluid tray was also made using the laser cutter and sealant (entirely by Jay).  The tray is 29.5 mm, much larger than the magnet grid.  While the size of the tray will affect the flow towards the edges of the grid, I made sure to only observe the flow near the center of the tray, where the boundary conditions will not be as important.  The bottom was painted black for better contrast with the particles I will use to image the flow.  Two pieces of copper bent over opposite sides of the tray were used as electrodes, and connected to a Tektronix PS280 DC Power Supply using alligator clips to drive a current through the fluid layer.  The experimental setup is shown in Figure \ref{fig:setuppic}.  
+
+	
+	The working fluid is a mixture of water, copper sulfate (to make it more conductive), and glycerol (to make it more viscous).  Our solution is $10\%$ $\text{CuSO}_{\text{4}}$ by mass and $20\%$ glycerol by volume as described in \cite{Kelley2011}.  To get quantitative measurements out of this setup, I needed to put tracer particles into the fluid, record their movements, and analyze these recordings in Matlab.  The particles that I used are S60 microscopic glass bubbles from 3M.  I recorded the motion of these particles using a Canon T5i DSLR camera supported by a ring stand over the tray of fluid.  I wrapped all reflective surfaces above the fluid in black cloth to reduce any glare on the bottom of the tray.  The camera was switched to video mode, with all settings left at automatic, except the standby function, which was turned off to stop it from interrupting the focusing process, and the focusing, which was switched to manual.  I recorded at a resolution of 1920$\times$1080 pixels, at 30 frames per second.
+	
+	For my lighting setup, I used three 38cm $\times$ 38cm  square white-light emitting diode (LED) panels made by iOS Light, Venice, CA.  These were arranged around the tray as shown in Figure \ref{fig:setuppic}, connected in series and powered by another 12V DC power supply, which can be seen to the left of Figure \ref{fig:setuppic}.  This worked very well for the particle setup I used.  For recording at higher currents, and therefore higher particle velocities, it is common to use strobed LEDs.  I attempted to use a strobe set up made of a powerful blue LED connected to a waveform generator.  By flashing at the same speed as the frame rate of the camera, the effective shutter speed of the camera is reduced to the duration of the strobe flash.  With a bright enough strobe, this is a good way to get high resolution images, with less blur than a longer shutter speed would give.  I tried this method first, but had a lot of trouble getting the lighting bright enough, and evenly distributed across the tray.  I also ran into some problems with the camera's indexing.  If the period of the strobe light is not perfectly lined up with the frame rate of the camera, you get bands of doubly-exposed or unexposed sections that travel up and down the screen.  This is a result of how the camera records records each pixel, and makes for unusable data. 
+	
+\begin{figure}[h!]
+ \centering
+\includegraphics[width=\linewidth]{Figs/realsetupdiagram.pdf}
+\caption{The experimental setup with key components labeled.}
+\label{fig:setuppic}
+\end{figure}
+
+\section{Data Collection}
+
+	  To collect data, I first made sure the grid of magnets was level using an adjustable leveling platform.  I then aligned the camera with the magnet grid to ensure that the lines of magnets were parallel to the edges of the frame on the camera viewer.  I centered the camera on a (roughly) 8.5 cm by 13 cm section at the center of the magnet grid, and used a level to make sure the camera was also level, pointing directly downwards.  Next, I positioned the tray over the magnets, attached the copper electrodes and connected the alligator clips from the electrodes to the power source.  After pouring in 450 mL of fluid, I measured the fluid depth at the center of the tray using Pittsburgh sliding electronic precision calipers.  I then seeded the fluid with tracer particles by sprinkling them on top little by little, and then mixing until average particle spacing looked to be approximately 0.3 mm.  Next, I used the camera's digital zoom to focus, zooming in and focusing for maximum particle resolution, and zooming back out to the original sized window.  The exact size of the window was not important, as long as the final video held at least a few periods of the forcing pattern, to get a full sample of the motion.  Usually this turned out to be about 8 rows of magnets.
+	
+	
+	Next, I recorded the particles' motion at different Reynolds numbers.  I varied the Reynolds numbers by changing the electrical current (since this is much easier to adjust than the fluid's viscosity).  I turned on the current to 20 mA and began recording.  I then slowly turned to current up in intervals of 10 or 20 mA, giving the flow one minute to settle into its new pattern.  After the fluid had settled, I recorded for an additional 5 seconds, noting the time on the camera recording and the current coming out of the power source, and then raised the current again.  I repeated this as many times as possible, until the current source could not go any higher.  This ended up being at about 220 mA.
+
+%\begin{figure}
+%\centering
+%\begin{subfigure}{.5\textwidth}
+ % \centering
+ % \includegraphics[width=1\linewidth]{Figs/lightsetup.JPG}
+%  \caption{before operation}
+%  \label{fig:sub1}
+%\end{subfigure}%
+%\begin{subfigure}{.5\textwidth}
+%  \centering
+%  \includegraphics[width=1\linewidth]{Figs/darksetup.JPG}
+%  \caption{during operation}
+%  \label{fig:sub2}
+%\end{subfigure}
+%\begin{subfigure}{.4\textwidth}
+%  \centering
+%  \includegraphics[width=.5\linewidth]{exp110mA}
+%  \caption{110 mA}
+ % \label{110 mA}
+%\end{subfigure}
+%\caption{The experimental setup.  The power source to the left of the tray powers the light panels, while the one on the right drives current across the fluid.  The container furthest to the right is full of the tracer particles}
+%\label{fig:setuppic}
+%\end{figure}
+	
+%\begin{figure}
+% \centering
+%\includegraphics[scale=.1]
+%{Figs/setup.jpg}
+%\caption{A photograph of my experimental setup.  The fluid and tracking particles are shown to the left of the tray.}
+%\label{fig:setuppic}
+%\end{figure}	
+
+	This setup could be improved by using better cameras, light sources and fluorescent particles, but all of these things are expensive and not entirely necessary for the type of results I am looking for.
+
+
+\section{PIV Methods}
+% Double spacing: if you want to double space, or one and a half 
+% space, uncomment one of the following lines. You can go back to 
+% single spacing with the \singlespacing command.
+% \onehalfspacing
+% \doublespacing
+	While creating the fluid flow that effectively mirrors what you want to measure is difficult, extracting quantitative data from the flow also poses a challenge.
+	
+	There are a few different adjustable parameters we can change in a particle imaging setup to get the best possible results.  Different flow systems require different conditions for particle-based data collection to be effective.  Some important parameters include particle size, particle material, density of particles within the fluid, the particles' effectiveness at scattering light, as well as the lighting itself and the quality of the recording device.  
+
+	Luckily, in a 2-dimensional fluid flow, a particles' material is much less of a concern, making it much easier to find good particles.  This is because we are only tracking the surface of the flow, so as long as the particles are made of a material that is less dense than the fluid, they will stay on the surface.  
+
+	In all particle tracking systems, smaller particles, better image quality, and better lighting with more luminescent particles result in more accurate tracking.  While small particles more faithfully follow a flow without interfering with the motion of the fluid \cite{Raffel2007}, particles also must be big enough to show up on camera.  With regards to lighting and image quality, as explained above, these things can definitely always be improved through more expensive cameras and brighter lighting to achieve more precise results.  
+
+	The final criterion for particle tracking, density of particles within the fluid, depends on the tracking technique being used.  In traditional particle tracking, the trajectories of individual particles are followed.  The drawback of this method is that it requires a very high image frame rate, low velocity, or low particle density.  This is because individual particles are indistinguishable.  If a particle moves too far from its initial position between frames, the tracking algorithm has no way of distinguishing it from another particle that moved towards its previous location.  This means particles must be sparse and slow, resulting in a less well-resolved velocity field.
+
+	Particle Image Velocimetry, or PIV, is a newer method that allows us to use a higher particle density than traditional particle tracking methods.  PIV software divides each image into tiny ``interrogation windows,'' each consisting of a tiny group of particles.  The unique distribution of particles in each window is distinguishable, and moves fairly homogeneously between frames.  PIV software tracks each of these configurations using statistical methods to determine the overall motion of the fluid.
+
+\subsubsection{PIV Statistical Methods}
+
+
+	The statistical methods themselves can be pretty complex.  A complete description can be found in the third chapter of \cite{Raffel2007}.  Here I explain a very simplified version, covering the basic concepts and techniques a PIV system uses.  This technique involves first assigning a value to each pixel according to its brightness.  In the gray-scale input image, lighter pixels are given higher numerical values, to create an image intensity field.  The program then breaks the entire area being analyzed down into ``interrogation windows", smaller boxes which it will look for in adjacent frames.  The program then attempts to pick out the same pattern in the next frame, shifting and warping the original interrogation window to try to find the best correlation with the same window in the new frame.  This process is described in greater detail below.
+	
+	The first thing a PIV program does is create an intensity field.  In theory, this should be fairly simple.  The computer would just need to pick out two different gradient values; the infinitely bright, white particles on a black background.  In reality, there is a lot more to this.  To mathematically represent an intensity distribution, a program must take into account both the input image, and the point spread function.  The point spread function is the function that describes how a single point spreads out when imaged.  For an ideal, well focused lens, the point spread function is the Airy function \cite{Raffel2007}, which looks similar to (and is commonly approximated as) a Gaussian function.  PIV software can also take into account defects in the lens and in the image, like scratches and reflections in the tray.  I tried to minimize these defects, but did not worry about tailoring the software specifically to my experiment, since the error from these small defects was not significant compared to errors from other aspects of my setup.
+	
+	After creating an image intensity field, the PIV program needs to create the cross-correlation function.  In an extremely steady flow, there would be no warping of interrogation windows.  Each window would move along, with the internal particle configuration staying the same from frame to frame.  This is obviously not the case, but some correlation can be found simply by shifting the window around its previous location.  This is depicted in Figure \ref{fig:PIV1}.
+
+\begin{figure}
+ \centering
+\includegraphics[width=0.95\linewidth]{./Figs/PIV1.pdf}
+\caption{A comparison of interrogation windows in two adjacent frames.  Black dots represent particles (in reality particles would be white spots on a dark background).  Initially the PIV software shifts the interrogation window to track the overall motion of the window.  The leftmost image shows frame two shifted left, leading to some correlation (the bottom two points).}
+\label{fig:PIV1}
+\end{figure}	   
+	
+	The numerical method for actually determining the correlation between two windows involves multiplying their intensity fields at each point, and summing over the entire window.  One window is then shifted and the process repeated, yielding a correlation value for each shift.  This is pretty effective, since configurations in which more high intensity values (particles) from two windows overlap will have larger numbers being multiplied together, and therefore will yield higher correlations.  The end result of this shifting around is a 2-dimensional grid, with each discrete point representing a single pixel shift.  The value associated with each point represents the cross-correlation of the window in the new frame shifted by the given amount, with the interrogation window from the original frame.  This can be visualized as a 3-dimensional graph, with spikes protruding from a plane.  Taller spikes represent better correlation for a given shift.  A possible set of peaks is shown in Figure \ref{fig:corrpeak}.
+	
+\begin{figure}[h!]
+\centering
+\includegraphics[width=.6\linewidth]{Figs/PIVspike5.jpg}
+\caption{A hypothetical plot of cross correlations.  The peak corresponds to a good correlation, revealing the shift of an interrogation window.}
+\label{fig:corrpeak}
+\end{figure}
+
+	From here, the program is able to guess the general motion of the window, ignoring any shear or distortion.  By comparing the general motion of nearby windows, the software can estimate how each window is distorted.  This allows it to compute a distortion function.  A rough sketch of this is shown in Figure \ref{fig:PIV2}.
+	
+\begin{figure}[h!]
+ \centering
+\includegraphics[width=0.95\linewidth]{./Figs/PIV2.pdf}
+\caption{The black squares represent interrogation windows, three of which contain configurations of particles.  The left image shows the movement of three adjacent windows from frame 1 (gray) to frame 2 (black).  The center image show general shift of each window observed, as explained above.  The rightmost image shows the resulting distortion function for the center window.}
+\label{fig:PIV2}
+\end{figure}	 
+
+	With general shift and distortion roughly figured out, the PIV program can put these together, applying both distortion and shift to the new interrogation window in the second frame, and checking for correlation.  This process can be repeated for multiple iterations until the correlation peak reaches a certain threshold.  A good correlation, after shift and distortion, is depicted in Figure \ref{fig:PIV3}.  The plot of correlation peaks for this idealized example (or any good correlation) would look like a single tall peak, with little noise around it.  Because the frame can only move in discrete shifts (of one pixel), a plot of correlation peaks may have a high peak made up of a set of adjacent, different sized peaks. To find the actual movement, the software fits the correlation peaks to a Gaussian, whose maximum provides a more exact result, with sub pixel resolution.
+	
+\begin{figure}[h!]
+ \centering
+\includegraphics[width=0.95\linewidth]{./Figs/PIV3.pdf}
+\caption{An idealized depiction of two consecutive frames.  The shift is applied to frame 2 in the third figure and the distortion in the fourth, resulting in a perfect correlation.}
+\label{fig:PIV3}
+\end{figure}	 
+	
+
+\bigskip
+
+	The specific program we used is called Prana, a free, open-source PIV package for Matlab.  This can be downloaded at \textsf{http://sourceforge.net/projects/qi-tools/files/}.  This program was originally developed at the AEThER Laboratory at Virginia Tech.  It accepts consecutive gray-scale frames of a video, and returns matrices of $x$ and $y$ velocity values.  To get our raw videos into a form that the software would accept, I cropped each video to a 2-3 second section for each driving current, and wrote a simple \textit{Mathematica} code that extracts, gray-scales, and exports the first few frames.  We then ran sets of frames through the code, each of which took a few hours total.  We did two passes, the first with larger interrogation windows, 32 pixels by 32 pixels, the second with smaller 24 by 24 windows.  The two pass method allows the program to narrow down the motion even further.  It was important not to go below 24 by 24 pixels, since it is important to have at least 10  particles per window, to give each a unique signature.  Prana also eliminates spurious vectors that sometimes occur by comparing them to the median of neighboring vectors and looking for outliers, using the technique presented in \cite{outliers}.  Finally, the resulting vector field is smoothed out with a Gaussian filter.  
+
+
+
+   \chapter{Theory}
+	% The three lines above are to make sure that the headers are right, that the intro gets included in the table of contents, and that it doesn't get numbered 1 so that chapter one is 1.
+
+
+
+\section{The Navier-Stokes Equations}
+% Double spacing: if you want to double space, or one and a half 
+% space, uncomment one of the following lines. You can go back to 
+% single spacing with the \singlespacing command.
+% \onehalfspacing
+% \doublespacing
+	
+	The Navier-Stokes equations are the governing equations of fluid dynamics.  They were developed independently by M. Navier and G. Stokes near the beginning of the 19th century \cite{Wendt2009}.  These equations are essential to understanding fluid dynamics and are at the very heart of the code.  The derivation presented here loosely follows the derivation found in the second chapter of \cite{Wendt2009}.
+	
+	The governing equations of fluid dynamics are based on three fundamental principles.  These are the conservation of mass, the conservation of momentum, and the conservation of energy.  I am not including the derivation for the energy equation, since it is not necessary for my analysis. The Navier-Stokes equations take the place of Newton's laws for fluid dynamics, and are based on applying Newton's second law to an infinitesimal fluid element.
+	
+\subsection{Tools and concepts}	
+
+	The infinitesimal fluid element is the first concept we will need to derive and understand these equations.  For rigid bodies, a force on one side moves the entire body as a single unit.  This is obviously not the case with fluids.  The way we can deal with nonrigid materials is to divide them into lots of minuscule boxes.  There are two different ways to do this.  
+	
+	The first method looks at fluid using a finite control volume.  For this method, we are looking at a tiny control volume fixed in space, with fluid flowing freely through it.  The second method uses the infinitesimal fluid element.  Here, we are looking at a tiny box of fluid as it flows around in time and space.  I will be primarily discussing the infinitesimal fluid element method, but the distinction between the two will be important later.    
+		
+	%Substantial deriv is acceleration of a chunk
+	The next tool we will need is the substantial derivative.  This is really just the full derivative (as opposed to the partial derivative).  This is the derivative we would use for the infinitesimal fluid element.  For one of these chunks of fluid, as it moves through our stationary reference frame, its position ($x$,$y$), and time are all changing.  This means that any of its properties, such as pressure, temperature, or $x$-velocity (each functions of position and time) moving over the time interval $[t_{1},t_{2}]$ can be written
+	
+\begin{equation}
+T(x_{1},y_{1},t_{1}) \longrightarrow T(x_{2},y_{2},t_{2}),
+\end{equation} 
+where the $T$ is temperature, $x_{1}$ and $y_{1}$ are the $x$ and $y$ coordinates at $t_{1}$, and $x_{2}$ and $y_{2}$ are the $x$ and $y$ coordinates at $t_{2}$.  From here, we can write a first order Taylor approximation for point 2 using point 1.
+
+\begin{equation}
+T_{2} = T_{1}+(t_{2} - t_{1}) \left(\frac{\partial T}{\partial t} \right)\biggr|_{x_{1},y_{1},t_{1}} + (x_{2} - x_{1}) \left(\frac{\partial T}{\partial x} \right)\biggr|_{x_{1},y_{1},t_{1}} + (y_{2} - y_{1}) \left(\frac{\partial T}{\partial y} \right)\biggr|_{x_{1},y_{1},t_{1}}.
+\end{equation} 
+Rearranging this yields,
+\begin{equation}
+\frac{T_{2} - T_{1}}{t_{2} - t_{1}} =\left(\frac{\partial T}{\partial t} \right)\biggr|_{x_{1},y_{1},t_{1}} + \frac{x_{2} - x_{1}}{t_{2} - t_{1}}  \left(\frac{\partial T}{\partial x} \right)\biggr|_{x_{1},y_{1},t_{1}} +\frac{y_{2} - y_{1}}{t_{2} - t_{1}} \left(\frac{\partial T}{\partial y} \right)\biggr|_{x_{1},y_{1},t_{1}}.
+\end{equation} 
+Now, taking the limit as $\Delta t = t_{2} - t_{1}$ goes to zero yields
+\begin{equation}
+\frac{D T}{D t} = \frac{\partial T}{\partial t} + v_{x} \frac{\partial T}{\partial x} + v_{y} \frac{\partial T}{\partial y},
+\end{equation} 
+where $\frac{D}{D t}$ defines the substantial derivative.  This could be extended into as many dimensions as we need.  My thesis only deals with 2, but it is easy to write the substantial derivative more generally as
+	
+\begin{equation}
+\frac{D}{D t} \equiv \frac{\partial}{\partial t} + \left( \vec{v} \cdot \vec{\nabla} \right).
+\label{expsub}
+\end{equation}	
+
+This is enormously useful for looking at properties of the infinitesimal fluid element.  Besides being used to find the element's pressure and temperature as it moves through time, the substantial derivative is what we need to define the acceleration of the infinitesimal fluid element.  For a moving fluid element, the acceleration in the $x$-direction can be written 
+
+\begin{equation}
+a_{x} = \frac{D v_{x}}{D t}.
+\label{infaccel}
+\end{equation} 
+  This follows from the definition of the substantial derivative, since the acceleration of a box of fluid is the rate of change of velocity for our fluid element moving through time and space.
+
+	
+\subsection{Conservation of mass}
+
+	With the concepts and tools above we can start applying some basic physics principles to fluids.  First, we will deal with conservation of mass.  To express this principle, I am using the first method for looking at fluid elements; the finite control volume.  Both methods could yield useful equations, but the tiny box fixed in space with fluid passing through it will give the conservative form of the mass continuity equation, which is the form that we will need later.  
+
+	So, picturing a tiny box fixed within the fluid, assuming mass is conserved allows me to state that the rate of change of the mass within the box will be equal to the amount of mass exiting or entering the box through the surface.  This must be the case, since there are no magical sources or sinks of mass inside our tiny cube.
+	
+	When written mathematically, the change in mass of the cube is
+
+\begin{equation}
+\delta M_{\text{inside}} = - \frac{\partial}{\partial t}  \int_{V} \rho  \,  dV
+\label{CM.masschange}
+\end{equation}
+and the flow of mass through its surface is	
+\begin{equation}
+\delta M_{\text{through surface}} = \oint_{V} \rho \vec{v} \cdot \vec{d}S.
+\label{CM.surfaceflow}
+\end{equation}
+
+	Here, $\vec{v}$ is the velocity vector, with a component in each direction at each point in space, and $\rho$ is the density of the fluid, with a scalar value at each point in space.  In Equation \ref{CM.masschange}, we are integrating over the volume of our box of fluid, with $dV = dx dy dz$.  In \ref{CM.surfaceflow}, we are integrating over the closed surface of the control volume, with the directional area element $\vec{d}S$ pointing perpendicular out of each face.  Equation \ref{CM.surfaceflow} can be rewritten as a volume integral using the vector divergence theorem;
+	
+\begin{equation}
+ \oint_{V} \rho \vec{v} \cdot \vec{d}S= \int_{V} \vec{\nabla} \cdot \left( \rho \vec{v} \right) \, dV.
+\label{CM.surfaceflowdiv}
+\end{equation}
+
+We can also rewrite Equation \ref{CM.masschange} as 
+\begin{equation}
+- \frac{\partial}{\partial t}  \int_{V} \rho  \,  dV = -   \int_{V} \frac{\partial \rho}{\partial t}  \,  dV,
+\label{Newmasschange}
+\end{equation}
+since the volume of the box is fixed in time.  Setting equations \ref{Newmasschange} and \ref{CM.surfaceflowdiv} equal to each other by the logic explained above, we can rearrange, and combine the volume integrals to yield;
+
+\begin{equation}
+\int_{V} \left[\frac{\partial \rho}{\partial t} + \vec{\nabla} \cdot \left( \rho \vec{v} \right) \, \right] dV = 0.
+\label{CM.consintegral}
+\end{equation}
+
+This is essentially saying that the change of mass within some volume is equal to the total divergence of the mass flux inside that volume.  Since Equation \ref{CM.consintegral} must hold for any choice of volume, it is clear that
+
+ 
+\begin{equation}
+\frac{\partial \rho}{\partial t} + \vec{\nabla} \cdot \left( \rho \vec{v} \right) = 0.
+\label{MassCont}
+\end{equation}
+
+This is the general form of the mass continuity equation but it is not entirely necessary for our system.  Because our fluid moves at relatively slow speeds at relatively low pressures, we can assume it is incompressible, meaning that its density, $\rho$ is constant in both time and space.  This simplifies Equation \ref{MassCont} into the incompressibility condition:
+
+\begin{equation}
+\boxed{\vec{\nabla} \cdot \vec{v} = 0.}
+\label{incompress}
+\end{equation}
+	
+\subsection{Conservation of momentum}	
+	%Momentum: F=ma
+	
+	While mass conservation is considered a Navier-Stokes equation, the name usually refers to the Navier-Stokes momentum equation. This is the equation at the heart of my computer code, and is derived by applying Newton's Second Law to the infinitesimal moving fluid element.  Applying Newton's law in just the $x$-direction for now yields 
+	
+\begin{equation}
+F_{x} = m a_{x}.
+\label{Newton2x}
+\end{equation}
+Here, $F_{x}$ is the total force in the $x$-direction, $m$ is the mass of the fluid element, and $a_{x}$ is the acceleration of the fluid element in the $x$-direction.
+
+	Dealing with only the left hand side for now, the total force accelerating a fluid element in the $x$-direction will be equal to the body force on the element plus the surface forces from the flow around it.  The body force is the force pulling on each molecule of the fluid.  This could be something like gravity, pulling down on each particle, or an electromagnetic force like the one in my experiment.  This force affects each particle regardless of the motion of other particles around it and can be represented (in 2 dimensions) as force per unit area ($f_{x}$), a vector with the $x$-component
+	
+\begin{equation}
+F_{x, \, body} = \int_{V} f_{x} \, dx dy.
+\label{fbody}
+\end{equation}  
+	
+	The surface force can be further divided into shear, normal, and pressure surface forces.  A normal surface force in the $x$-direction would be a force acting on the $x=0$ and $x=dx$ faces of the element as depicted in Figure \ref{fig:forces} (the $y$-$z$ plane for a 3-dimensional fluid element). This force would be perpendicular to the face, pushing or pulling the box of fluid.  In contrast, the $x$-component of shear will be a force in the $x$-direction acting on the $y=0$ and $y=dy$ faces of the element (the $x$-$y$ and $x$-$z$ planes of a 3-dimensional fluid element) through viscous friction.  This force is shown in Figure \ref{fig:forces}, with the $y=0$ arrow pointing left and the $y = dx$ arrow pointing right.  The directions are just to follow the convention that a positive velocity gradient increases in the positive direction.  This creates a shear force in which the top is moving to the right and the bottom is moving left relative to overall motion of the fluid element.  Finally, the pressure surface force pushes inwards on the fluid element from both sides.  All of these forces are shown for a 2-dimensional fluid element in Figure \ref{fig:forces}.
+	
+\begin{figure}[h]
+ \centering
+\includegraphics[width=0.45\linewidth]
+{Figs/infforces.png}
+\caption{A diagram of the forces on an infinitesimal 2-dimensional fluid element.}
+\label{fig:forces}
+\end{figure}
+	
+Notice that each of the surface forces above acts on opposite sides of the fluid element, so naturally the net surface force will depend on the difference between the two sides, and therefore the gradient of pressure and velocity in our fluid.
+	
+	Combining all of these forces, the net surface force per volume in the $x$-direction can be written
+
+\begin{align*}
+\centerline{\text{Net surface force in the x direction} \, =}   \\ 
+\\
+\underbrace{\left[ p - \left( p + \frac{\partial p}{\partial x} dx \right) \right] dy}_{\text{pressure difference}} +
+\underbrace{\left[ \left( \tau_{xx} + \frac{\partial \tau_{xx}}{\partial x} dx \right) - \tau_{xx} \right] dy}_{\text{normal stress difference}} + 
+\underbrace{\left[ \left( \tau_{yx} + \frac{\partial \tau_{yx}}{\partial y} dy \right) - \tau_{yx} \right] dx}_{\text{shear stress difference}}.
+\end{align*}
+Where $\tau_{ij}$ is the force in the $j$ direction on the surface perpendicular to the $i$ axis.  After canceling and combining with the body force, this becomes
+
+\begin{equation}
+F_{x} = \left[ - \frac{\partial p}{\partial x} + \frac{\partial \tau_{xx}}{\partial x} +  \frac{\partial \tau_{yx}}{\partial y} + f_{x} \right] \, dx dy.
+\label{Fx}
+\end{equation}
+
+Combining this, Equation \ref{infaccel} and the mass per volume of a 2-dimensional infinitesimal fluid element, $m = \rho \, dx dy$, Newton's second law (in the $x$-direction) becomes
+
+\begin{equation}
+ \underbrace{- \frac{\partial p}{\partial x} + \frac{\partial \tau_{xx}}{\partial x} +  \frac{\partial \tau_{yx}}{\partial y} + f_{x}}_{\vec{F} \text{ per volume}} = \underbrace{\rho \frac{D v_{x}}{D t}}_{m\vec{a} \text{ per volume}}.
+\label{fluidN2}
+\end{equation}
+
+
+	This is the $x$-component of Navier-Stokes momentum equation in conservative form, which will govern the motion of the fluid in my setup.  All that is left now is to define the $\tau$ terms and then apply some assumptions we can make about our flow.  This will allow us to rearrange the equation into an easier to use form. 
+	 
+\subsection{Assumptions and rearranging}	
+
+	The first assumption we can make is that the fluid that I am using is Newtonian.  This means the shear stress is proportional to the velocity gradient.  For these fluids, Stokes found the $\tau$ elements are
+	
+\begin{equation}
+\tau_{xx}= \lambda \vec{\nabla} \cdot \vec{v} + 2 \mu \frac{\partial v_{x}}{\partial x}
+\label{stresstensorxx}
+\end{equation}
+and
+\begin{equation}
+\tau_{yx} = \mu \frac{\partial v_{y}}{\partial x} + \mu \frac{\partial v_{x}}{\partial y}
+\label{stresstensorxy}
+\end{equation}
+ \cite{Wendt2009}, where $\mu$ is a constant known as the viscosity of the fluid and $\lambda$ is the bulk viscosity coefficient, which often stated to be $-\frac{2}{3} \mu$, and will drop out of our solution when we enforce incompressibility.
+
+	Because we can assume the fluid to be incompressible, Equation \ref{incompress} states that $\vec{\nabla} \cdot \vec{v} = 0$.  This eliminates the first part of the $\tau_{xx}$ term, reducing it to $\tau_{xx} = 2 \mu \frac{\partial v_{x}}{\partial x} $.  Taking the derivatives of these terms  necessary for Equation \ref{fluidN2} yields 
+	
+\begin{equation}
+\frac{\partial \tau_{xx}}{\partial x} +  \frac{\partial \tau_{yx}}{\partial y} = 2 \mu \frac{\partial^{2} v_{x}}{\partial x^{2}} + \mu \frac{\partial^{2} v_{y}}{\partial x \partial y} + \mu \frac{\partial^{2} v_{x}}{\partial y^{2}}, 
+\label{stressform}
+\end{equation}	
+which can be rearranged and rewritten as
+	
+\begin{equation}
+\mu \left( \frac{\partial^{2} v_{x}}{\partial x^{2}} + \frac{\partial^{2} v_{x}}{\partial y^{2}} \right) + \mu \frac{\partial }{\partial x} \left( \frac{\partial v_{x}}{\partial x}+\frac{\partial v_{y}}{\partial y} \right) = \mu \nabla^{2} v_{x} + \mu \frac{\partial}{\partial x}\left(\vec{\nabla} \cdot \vec{v} \right).
+\label{simpstress}
+\end{equation}
+Again, the divergence term can be eliminated by enforcing incompressibility, leaving only the Laplacian term.
+	
+	Plugging equations \ref{expsub} and \ref{simpstress} into Equation \ref{fluidN2}, and dividing by density, $\rho$, gives
+	
+\begin{equation}
+\frac{\partial v_{x}}{\partial t} + (\vec{v} \cdot \vec{\nabla})v_{x} = - \frac{1}{\rho}\frac{\partial p}{\partial x} + \nu \nabla^{2} v_{x} + \frac{1}{\rho} f_{x},
+\label{newNS}
+\end{equation}
+
+where $\nu$ is the kinematic viscosity, equal to $\frac{\mu}{\rho}$.  Finally, this can be applied to each dimension of vector $\vec{v}$ simultaneously by writing it as
+	
+%*Stokes experimentally obtained the taus (for a Newtonian fluid)
+%rearrange stufff (see notebook)
+
+	%conservative form
+	
+	%incompressible
+    
+    
+    
+
+
+    
+    
+    
+\begin{equation}
+\boxed{ \frac{\partial \vec{v}}{\partial t} + (\vec{v} \cdot \vec{\nabla}) \vec{v} = - \frac{1}{\rho} \nabla p + \nu \nabla^{2} \vec{v} + \frac{1}{\rho} \vec{f},}
+\label{NavierStokes}
+\end{equation}
+   the final form of the Navier-Stokes momentum equation.  The last thing we have to do to make this equation usable in our code is to make it unitless through nondimensionalization.  To do this, each variable will be rewritten according to scales that are intrinsically part of the Kolmogorov system.  The length scale will be the wavelength of the sinusoidal forcing.  Time scales will be determined by the velocities of the fluid, ($U$) using $U = \frac{\text{length}}{\text{time}}$, which in turn will allow us to determine mass using the viscosity ($\mu$) using $\mu = \frac{\text{mass}}{\text{length time}}$.  These scales can be combined to create the pressure and density scales from $p=\frac{\text{mass}}{\text{length time}^{2}}$ and $\rho = \frac{\text{mass}}{\text{length}^{3}}$ (here I am using 3-dimensional units for familiarity).  Defining the nondimensional variables $v = v' \frac{L}{T}$, $x = x' L$, $t = t' T$, $p = p' \frac{M}{LT^{2}}$, $\rho = \frac{M}{L^{3}}$, $\nabla = \nabla' \frac{1}{L}$ and $\nu = \nu' \frac{L^{2}}{T} $, where $L$ is the length scale, $M$ the mass scale, and $T$ the time scale. Also note that $\vec{f}$ is force per volume, so $\vec{f} = \vec{f}' \frac{M}{T^{2} L^{2}}$.  With these new nondimensionalized terms, \ref{NavierStokes} becomes
+\begin{equation}
+\left( \frac{L}{T^{2}} \right) \frac{\partial \vec{v'}}{\partial t'} + \left( \frac{L}{T^{2}} \right)(\vec{v'} \cdot \nabla') \vec{v'} = - \left( \frac{L}{T^{2}} \right) \nabla' p' + \left( \frac{L}{T^{2}} \right) \nu' \nabla'^{2} \vec{v'} + \left( \frac{L}{T^{2}} \right)  \vec{f'}.
+\label{NSnondim}
+\end{equation}   
+    
+Dividing through by $\frac{L}{T^{2}}$, cancels all dimensions, leaving the flow parameter $\nu'$, which we will denote as one over the Reynolds number, giving the nondimensionalized Navier-Stokes equation:
+   \begin{equation}
+\boxed{ \frac{\partial \vec{v'}}{\partial t'} + (\vec{v'} \cdot \nabla') \vec{v'} = -  \nabla' p' + \left( \frac{1}{Re} \right) \nabla'^{2} \vec{v'} + \vec{f'},}
+\label{ReNS}
+\end{equation}  
+ The Reynolds number is unitless, and can be rewritten in terms of our scale parameters as $\frac{\nu}{U L}$, a unitless quantity which compares inertial and viscous effects.
+    
+    
+ 
+\section{Computational Methods}
+
+I am simulating 2-dimensional Kolmogorov flow using two different programs in \textit{Mathematica}.  The first is a time-independent code, meaning that it assumes the system is not changing in time.  For this I started from a code posted on the Wolfram Blog, \cite{Mokhasi2013}.  The second method does not assume time independence.  It begins with no flow at all, and calculates the flow at each time-step for an arbitrary number of time-steps.  For this code, I followed the methods from the University of Michigan's Computational Fluid Dynamics I course from 2001 \cite{WPI2001}, in which they wrote a time-dependent driven cavity flow solver in Matlab.  Driven cavity flow is a common fluid dynamics problem in which an enclosed cavity of fluid is being driven by a moving boundary.  It was extremely helpful to follow a recipe I knew would work, since these codes (the time-dependent ones especially) can be very temperamental and can easily become unstable, yielding impossibly huge results.  Below, I explain the methods required to write each code.
+
+
+\subsection{Discretization and finite difference approximations}	
+    
+    In order to get a computer to simulate a fluid dynamics problem, there are a few concepts that we need.  These methods will allow the computer to approximate and solve complex functions to an arbitrary degree of accuracy.  Firstly, discretization is a method around which all of my computation is based.  The Navier-Stokes equation is extremely hard to solve analytically, except in some special cases, so in order to solve it on our 2-dimensional surface, we break the surface up into a grid of discrete points and solve it numerically.  More points will give an answer of higher resolution, but will make the code more computationally demanding.  The positions on the grid are represented as an $n \times n$ matrix, at each of which the equation will be solved.
+    
+    The next tool that I am using is the finite difference approximation for derivatives.  In the most basic sense, a derivative is the slope of a function at a single point.  To find this, we can use a Taylor expansion to approximate the value of a function $f$ at a point just past $x_{0}$,
+    
+%Taylor series    
+\begin{equation}
+f(x_{0}+dx) = f(x_{0}) + \frac{d f}{d x} \biggr|_{x_{0}} dx + O(dx^{2}).
+\label{taylorderivative}
+\end{equation}  
+ From this we can approximate the derivative at $x_{0}$ as 
+
+\begin{equation}
+\frac{d f}{d x} \biggr|_{x_{0}} \approx \frac{f(x_{0}+dx) - f(x_{0})}{dx}.
+\label{taylorderivative2}
+\end{equation}
+%deviv eq
+
+Since any continuous function can be represented by a Taylor series to arbitrary accuracy, we can extend these finite difference approximations out to be as accurate as needed.  This process for approximating derivatives is called the finite difference method.  Generally, the first order approximation is fine.  We can use this to calculate first and second partial derivatives in two dimensions based solely off of nearby points.  On our 2-dimensional grid, $dx$ will be our grid spacing.  Ignoring higher order terms, the finite difference approximations can be written as
+
+\begin{equation}
+\frac{\partial f_{i,j}}{\partial x} \approx \frac{f_{i+1,j} - f_{i,j}}{dx} 
+\label{fdongrid}
+\end{equation}
+and
+\begin{equation}
+\frac{\partial^{2} f_{i,j}}{\partial x^{2}} \approx \left( \frac{\partial f_{i+1,j}}{\partial x} - \frac{\partial f_{i,j}}{\partial x} \right) \frac{1}{dx} = \frac{f_{i+1,j} - 2 f_{i,j} + f_{i-1,j}}{dx^{2}} 
+\label{fdongrid2}
+\end{equation}
+where $f_{i,j}$ represents $f$ for the grid point at the in the $i^{th}$ column (x-coordinate) and the $j^{th}$ row (y-coordinate).  Note that the second derivative is essentially the slope of the slopes on either side of $x_{0}$.  The first derivative can easily be extended out to second order accuracy by averaging the derivatives on either side of $x_{0}$, making it second order accurate;
+
+ \begin{equation}
+\frac{\partial f_{i,j}}{\partial x} \approx \frac{f_{i+1,j}- f_{i-1,j}}{2 dx} .
+\label{fdongrid3}
+\end{equation}
+
+These can be changed to $y$ partials, or any other partial, by modifying the index associated with that variable ($j$ for the $y$ partial, instead of $i$).  Equation \ref{fdongrid3} is called the midpoint formulation of  $\frac{\partial f_{i,j}}{\partial x}$, since it finds this derivative using the values on either side of it.  Equation \ref{fdongrid} would be considered an endpoint approximation, since it approximates the derivative at a point using only points to one side of it.  Approximations can be made to arbitrary accuracy for both midpoint and endpoint approximations. 
+%\begin{align*}
+%\centerline{\text{Total surface force} \, =}   \\ 
+%\centerline{\text{Total surface force} \, =}   \\ 
+%\\
+%\end{align*}
+
+%\begin{align*} 
+%\frac{\partial f(x,y)}{\partial x} \approx \frac{1}{2}\left[ \frac{f(x+dx,y)-f(x,y)}{dx} + \frac{f(x,y)-f(x-dx,y)}{dx}\right] + \bigcirc^{3} \\
+%\\
+%= \frac{f(x+dx,y)- f(x-dx,y)}{2 dx}
+%\end{align*} 
+    
+
+%and
+%\begin{equation}
+%\frac{\partial^{2} f(x,y)}{\partial x^{2}} = \frac{1}{2}\left[ \frac{f(x+dx,y)-f(x,y)}{dx} + \frac{f(x,y)-f(x-dx,y)}{dx}\right] + \bigcirc^{2} \approx \frac{f(x+dx,y)- f(x-dx,y)}{2 dx}
+%\label{finitedifference2}
+%\end{equation}  
+    
+    
+
+    
+
+	For the time-independent code, I extended the accuracy out to fourth order terms in space using \cite{Fornberg1988}, which contains an algorithm to find the fourth order approximations, and a table of fourth order weights.  For the time-dependent code, which is much more computationally intensive, I left it at first and second order, as is the standard procedure \cite{Franklin2013, WPI2001, MIT2008}.
+	
+	One final thing to mention is how points at the boundaries of the grid are dealt with.  To create solid boundary walls like those at the edges of our experimental tray, we would enforce a no-slip boundary condition.  This means the points at the boundary are held fixed in space, with velocities set to zero.  This accurately approximates a realistic solid boundary, as the adhesive forces holding molecules touching a boundary will force them to move at the same speed.
+
+\subsection{The time-independent solver}
+	The first method I looked at to solve my system was a time-independent solver.  This method relies on the assumption that the flow has reached a steady solution that is not changing in time.  For this code, I modified the code from \cite{Mokhasi2013}.  The original code was designed to solve the 2-dimensional driven cavity problem.  To make it representative of Kolmogorov flow, I fixed the moving (driving) boundary so that it was stationary, and added a forcing term at each point on the grid.  The forcing term I used is the one from Equation \ref{forcing}, which defines Kolmogorov flow, but it would be simple change this to any desired forcing.  I also generated my own fourth order differential matrices, extending the ones from \cite{Franklin2013} out from second order and using the appropriate endpoint approximations on the boundaries, instead of using a pre-programmed \textit{Mathematica} function.  This code can be found in Appendix A.
+	
+	The code works by discretizing the area into an $n \times n$ grid of arbitrary resolution.  Each grid-point holds a unique $x$ and $y$ velocity value, and a pressure value in a stationary reference frame.  These variables are written as a single $n^{2}$ long vector of variables, which can be re-fitted onto the grid by applying an indexing function \cite{Franklin2013}; 
+\begin{equation}
+g(i,j) = (j-1)n + i.
+\label{indexfunction}
+\end{equation}	
+  The finite difference derivatives expressed above are written at each point, making it a linear combination of grid points around it.  This means that for each point, the derivative operator can be written as an $n^{2}$ long vector, with finite difference coefficients attached to the grid points (put into vector form using Equation \ref{indexfunction}) around the point of interest.  Taking the dot product of this $n^{2}$ long vector and an $n^{2}$ vector of variables on the grid will yield the derivative at that point.  For example, the vector for a finite difference derivative in $x$ at point $p$ dotted with the $x$-velocity vector would yield $\frac{\partial v_{x}}{\partial x}\vert_{p}$. 
+
+
+ 	To find the derivative at every point, we create an $n^{2}$ long derivative vector at for each of the $n^{2}$ points, and combine them into an $n^{2} \times n^{2}$ derivative operator matrix.  These operators act on a vector of variables through matrix multiplication, resulting in an $n^{2}$ vector of derivatives, which can then be indexed to an $n \times n$ grid of derivative values.  The code I wrote (Appendix A) generates fourth-order accurate first and second derivative operator matrices, using fourth order accurate midpoint formulas \cite{Fornberg1988} for the points in the bulk of the fluid, and the appropriate endpoint formulas near the edges.  This makes finding derivatives on a discrete grid into the matrix problem below;
+\begin{equation}
+\mathbb{A}_{x} \vec{v_{x}} = \vec{a_{x}},
+\label{derivmatprob}
+\end{equation}	
+ where $\vec{v_{x}}$ is the vector of $x$-velocities at each point, length $n^{2}$, $\mathbb{A}_{x}$ is the $n^{2} \times n^{2}$ $x$-derivative operator matrix, and $\vec{a_{x}}$ is a vector of $\frac{\partial v_{x}}{\partial x}$ values, also length $n^{2}$.  
+ 
+ 	Since even at fourth order accuracy each derivative vector only has 5 terms \cite{Fornberg1988}, the entire matrix $\mathbb{D}_{x}$ will only have $5 \times n^{2}$ of the $n^{4}$ terms be non-zero.  This means it will be a ``sparse" matrix, and allows us to use the \textit{SparseArray} command to create them, and some simplified techniques to deal with them.
+	
+	Using these derivative approximations and assuming the flow does not change in time, the Navier-Stokes equation becomes an enormous set of solvable linear algebra equations.  
+	
+	 Expanding the nondimensionalized Navier-Stokes equation, (Equation \ref{ReNS}), the change in $x$-velocity with respect to time can be written
+	
+\begin{equation}
+-\frac{\partial v_{x}}{\partial t} = v_{x} \left( \frac{\partial}{\partial x} v_{x} \right) + v_{y} \left( \frac{\partial}{\partial y} v_{x} \right) + \left( \frac{\partial}{\partial x} p \right) - \frac{1}{\text{Re}} \left( \frac{\partial^{2}}{\partial x^{2}} v_{x} + \frac{\partial^{2}}{\partial y^{2}} v_{x}  \right),
+\label{ReNsX}
+\end{equation}
+ with an analogous equation for $\frac{\partial v_{x}}{\partial t}$.
+Here Re is the Reynolds number, defined earlier, $v_{x}$, $v_{y}$ and $p$ are $n^{2}$ vectors representing $x$ and $y$ velocities and pressure at each point on the $n \times n$ grid, and the partial derivatives are given by the $n^{2} \times n^{2}$ matrices described above.
+
+For a steady solution, $-\frac{\partial v_{x}}{\partial t} = 0$.  This means we are essentially finding the root (zeros) of a huge system of linear algebraic equations represented by the right hand side of the equation above.
+
+	After defining a unique variable at each grid point and creating the differential matrices, Equation \ref{ReNsX} is defined.  The boundary variables are then set to 0, to simulate the no-slip walls of the container.  Finally, the roots are found using a built in \textit{Mathematica} \texttt{FindRoot} function. The resulting values, $v_{x}$, $v_{y}$, and $p$ can be plotted either as scalars on a grid in a contour plot, combined to create a vector field, or plotted in a line integral convolution, as explained in the results section.
+	
+
+
+
+\subsection{The time-dependent solver}
+    
+    As the driving is increased, the laminar solution to the Kolmogorov flow loses stability and gives way to a vortex pattern \cite{Kelley2011, Swinney1999}.  This pattern is initially steady in time, so there a time-independent code works just fine.  As explained in the Introduction, Kolmogorov flow's initial bifurcation from its steady, laminar state resembles a supercritical pitchfork bifurcation \cite{Swinney1999}, where the laminar flow becomes unsteady, and a new flow pattern replaces it as the stable state of the system.  At higher fluid velocities, this steady pattern gives way to periodic and potentially chaotic flows \cite{Thess1993}.  At this point the time-independent code becomes ineffective, and will give incorrect results.  The technique above becomes vastly more complex and computationally expensive when we add in a temporal dimension.  I wrote a time-dependent code using methods described in \cite{Wendt2009}, \cite{Kelley2011}, and \cite{WPI2001}.
+    
+    First, I need to the simplify the Navier-Stokes momentum equation into a form that is easier to deal with.  By taking the curl of the entire equation, I can eliminate the pressure term, since the curl of a gradient is always zero.  To simplify the result I can define vorticity as 
+\begin{equation}
+\vec{\omega} = \vec{\nabla} \times \vec{v} = \left( \frac{\partial v_{y}}{\partial x} - \frac{\partial v_{x}}{\partial y} \right) \hat{z},
+\label{vorticity}
+\end{equation}
+    which is a vector, but points only in the $\hat{z}$ direction for flow confined to the $x$,$y$ plane.  After taking the curl, the nondimensionalized Navier-Stokes equation becomes 
+\begin{equation}
+\frac{\partial \vec{\omega}}{\partial t} + (\vec{v} \cdot \vec{\nabla})\vec{\omega} - (\vec{\omega} \cdot \vec{\nabla}) \vec{v} = \text{Re}^{-1} \vec{\nabla}^{2} \vec{\omega} + (\vec{\nabla} \times \vec{f}).
+\label{vortNS}
+\end{equation}
+
+	To simplify further, we can define the stream function $\psi$ as
+\begin{equation}
+v_{x} = \frac{\partial \psi}{\partial y}
+\label{streamx}
+\end{equation}
+and
+\begin{equation}
+v_{y} = -\frac{\partial \psi}{\partial x}.
+\label{streamy}
+\end{equation}
+	
+	The physical meaning of the stream function is like a path that a moving infinitesimal piece of fluid will follow.  Isocontours of $\psi$ act like flow ``rails'', where a particle riding on top of the fluid follows a path of constant $\psi$.  
+	
+	Now, we can rewrite the momentum Navier-Stokes equation in terms of only vorticity and stream functions.  Plugging in the stream function, the third term on the left hand side of Equation \ref{vortNS} becomes
+\begin{equation}
+(\vec{\omega} \cdot \vec{\nabla}) \vec{v} = \left( \frac{\partial v_{y}}{\partial x} - \frac{\partial v_{x}}{\partial y} \right) \frac{\partial}{\partial z} \vec{v} = 0,
+\end{equation}	
+	since $\vec{v}$ does not depend on $z$.  Inserting the stream function into the rest of the Navier-Stokes equation yields 
+
+\begin{equation}
+\frac{\partial \vec{\omega}}{\partial t} + \frac{\partial \psi}{\partial y} \frac{\partial \vec{\omega}}{\partial x} - \frac{\partial \psi}{\partial x} \frac{\partial \vec{\omega}}{\partial y} = \text{Re}^{-1} \vec{\nabla}^{2} \vec{\omega} + \vec{f_{\nabla}}, 
+\label{vortstreamNS}
+\end{equation}
+ where I have expanded out the second term on the left hand side of Equation \ref{vortNS} in terms of the stream function, and defined a new forcing term $\vec{f_{\nabla}}$ as $(\vec{\nabla} \times \vec{f})$.  Changing the Navier-Stokes equation into this form is advantageous because we eliminated the pressure term.  Now instead of having $v_{x}$, $v_{y}$, and $p$ as variables, we only have $\vec{\omega}$ and $\psi$.  While $\vec{\omega}$ is technically a vector, for 2-dimensional flow, it points exclusively in the $\hat{z}$ direction, and so can be treated like a scalar.
+  
+ From here the problem breaks down into a few different steps.  For each time-step, first we find the stream function from the vorticity calculated in the previous time-step, then we find the updated vorticity function.
+ 
+ \subsubsection{Updating the stream function using SOR}
+ 
+ Note that from equations \ref{vorticity}, \ref{streamx}, and \ref{streamy}, we can write the vorticity as 
+ 
+ \begin{equation}
+\vec{\omega} = \left( - \frac{\partial^{2} \psi}{\partial x^{2}} - \frac{\partial^{2} \psi}{\partial y^{2}} \right) \hat{z} = \mathbb{A} \psi,
+\label{vorticity2}
+\end{equation}
+so we can get $\psi$ from a known $\vec{\omega}$.  This is an example of an elliptic equation, and is the governing equation of subsonic, incompressible flows \cite[pp 84--85]{Wendt2009}.
+ 
+ Rewriting this using finite difference second derivatives as in Equation \ref{fdongrid2} yields 
+\begin{equation}
+\omega_{i,j} = - \frac{\psi_{i+1,j} - 2 \psi_{i,j} + \psi_{i-1,j}}{dx^{2}} - \frac{\psi_{i,j-1} - 2 \psi_{i,j} + \psi_{i,j-1}}{dy^{2}}.
+\end{equation}  
+ Assuming an evenly spaced grid ($dx = dy$) we can combine terms to get
+ \begin{equation}
+\omega_{i,j} dx^{2} = -\psi_{i+1,j} - \psi_{i-1,j} - \psi_{i,j-1} - \psi_{i,j-1} + 4 \psi_{i,j}.
+\label{streamupdate}
+\end{equation}  
+ 
+	As in the time-independent section, we are solving a large system of linear equations.  Like before, the finite difference derivative matrices are sparse.  Unlike last time, we need to solve this problem many times (once per time step), so it is much faster to use an iterative method called successive over-relaxation, or SOR.
+	
+	Successive over-relaxation is an iterative method for solving linear systems of equations.  \textit{Mathematica}'s \texttt{LinearSolve} or \texttt{FindRoot} functions solve systems of equations by exact methods, such as Gaussian elimination.  While these would still work, they are much slower than iterative methods, which can be incredibly fast, but do not find exact solutions.  Iterative methods make an initial guess and iterate, quickly converging on the solution until it is within some specified accuracy.
+	
+	As explained in \cite[pp 279--281]{Franklin2013}, the basic method here is to decompose $\mathbb{A}$ from Equation \ref{vorticity2} into three more easily invertible matrices; a matrix $\mathbb{D}$ containing only elements along the diagonal of $\mathbb{A}$, the strictly upper triangular matrix $\mathbb{U}$ containing only elements above the diagonal, and a lower triangular matrix $\mathbb{L}$, containing elements below the diagonal.   
+	
+	In this specific iterative method, the matrix is updated using 
+
+\begin{equation}
+(\mathbb{D} - \beta \mathbb{L}) \psi^{m+1} = ((1 - \beta) \mathbb{D} + \beta \mathbb{U}) \psi^{m} + \beta (\omega dx^{2})
+\label{SOR}
+\end{equation} 
+\cite{Franklin2013}, where $\psi$ and $\omega$ are $n^{2}$ long vectors, representing each grid point indexed using Equation \ref{indexfunction}, and $\mathbb{D}$, $\mathbb{U}$, and $\mathbb{L}$ are all $n^{2} \times n^{2}$ square matrices.  In Equation \ref{SOR}, $m$ represents the iteration number.  Finally, $\beta$ is the weighting term, which ensures the solutions actually converge, and is set between 1 and 2 for SOR.  For a single one of the linear equations shown in Equation \ref{singlin}, it is clear that point $\psi_{i,j}$ will fall along the diagonal of $\mathbb{A}$.  From the indexing function, Equation \ref{indexfunction}, it is also clear that $\psi_{i+1,j}$ and $\psi_{i,j+1}$ will be located to the right of the diagonal, and therefore fall in the upper triangular matrix, while $\psi_{i-1,j}$ and $\psi_{i,j-1}$ will be to the left, and therefore fall in the lower. 
+
+\begin{equation}
+\begin{bmatrix}
+  & & &  \\
+ [ \hdots  & A_{(i,j),(i,j)} & \hdots & \hdots ] \\
+  & & &  \\
+  & & &  \\
+  & & & 
+ \end{bmatrix} 
+ \begin{bmatrix}
+ 
+ \vdots \\
+  \psi_{i,j} \\
+\vdots \\
+\vdots \\
+ \end{bmatrix}
+ = \omega_{i,j} dx^{2}
+ \label{singlin}
+ \end{equation}
+	
+	This means we can rewrite the SOR iteration much more simply as 
+\begin{equation}
+4 \psi_{i,j}^{m+1} - \beta \psi_{i-1,j}^{m+1} - \beta \psi_{i,j-1}^{m+1} =  (1 - \beta) 4 \psi_{i,j}^{m} + \beta \psi_{i+1,j}^{m} + \beta \psi_{i,j+1}^{m} + \beta dx^{2} \omega_{i,j}^{m}.
+\end{equation}
+which, solving for $\psi_{i,j}^{m+1}$ can be rearranged into 
+ 
+\begin{equation}
+\psi_{i,j}^{m+1} =  \beta \frac{1}{4} \left( \psi_{i-1,j}^{m+1} + \psi_{i,j-1}^{m+1} + \psi_{i+1,j}^{m} + \psi_{i,j+1}^{m} + \omega_{i,j}^{m} dx^{2} \right) + (1 - \beta) \psi_{i,j}^{m}.
+\label{SORit}
+\end{equation}
+
+	Since the stream functions are being solved in order, for the $\psi_{i,j}^{m+1}$ step, $\psi_{i-1,j}^{m+1}$ and $\psi_{i,j-1}^{m+1}$ will have already been solved, allowing us to use these values in our derivation.  This is the final form of SOR used in my code.  The program iterates this to get an updated stream function until Equation \ref{SORit} is satisfied to within a specified degree of accuracy, set by a parameter called  MaxError.
+	
+ \subsubsection{Boundary Conditions}
+	I applied and analyzed two different sets of boundary conditions in my code.  First is solid boundary walls, which could easily be implemented by following the same procedure from \cite{WPI2001}, since solid boundaries are a necessary part of the driven cavity problem.  For this, all we have to do is pin down the vorticity at the boundaries, and we can update it everywhere else.  As mentioned earlier, to create solid boundary walls, we can assume that at points touching the wall (or infinitely close), the velocity of the fluid will be the same as the velocity of the wall.  For our fixed walls, this means the stream function, the $x$ and $y$ derivatives of which correspond to $y$ and $x$ velocities, is constant all along the boundary.  Using Equation \ref{vorticity2}, it is clear that if vorticity is fixed all along the left wall, $\frac{\partial^{2} \psi}{\partial y^{2}}$ will be 0 all along that wall, leaving
+\begin{equation}
+\vec{\omega}_{\text{left}} = - \frac{\partial^{2} \psi}{\partial x^{2}}.
+\label{vortleft}
+\end{equation}
+To get $\vec{\omega}_{\text{left}}$, I can follow the method explained in \cite{WPI2001}.  Here, they follow a routine almost identical to the finite difference derivation, writing a Taylor approximation for $\psi$ one column away from the boundary as
+\begin{equation}
+\psi_{2,j} = \psi_{1,j} + \frac{\partial \psi_{1,j}}{\partial x} dx + \frac{\partial^{2} \psi_{1,j}}{\partial x^{2}}\frac{dx^{2}}{2} + \text{higher order terms}.
+\end{equation}
+ Noting that $\frac{\partial \psi_{1,j}}{\partial x} = -v_{y}$ and $\psi_{1,j}$ are both zero at the boundary, combining with Equation \ref{vortleft} above, I can rearrange this into
+\begin{equation}
+\vec{\omega}_{\text{left}} = -\frac{2}{dx^{2}} \psi_{2,j}.
+\end{equation}
+This is a function we can solve, since $ \psi_{2,j}$ is not a boundary stream function, and has been calculated by SOR.  This approximation is repeated for all of the boundaries, allowing for usable $\vec{\omega}_{\text{boundaries}} $ in the update.  This is important because it gives the code an updated starting point to work from.
+
+\begin{figure}[h!]
+ \centering
+\includegraphics[width=0.8\linewidth]{./Figs/boundfig.pdf}
+\caption{A figure describing how the stream function was calculated for periodic boundary conditions.}
+\label{fig:boundfig}
+\end{figure}
+
+	Although the tray does have solid boundary walls, I am focusing on a section in the middle, mostly unaffected by boundary conditions.  Here, the fluid can be approximated as part of an infinite plane, which can be more accurately modeled by periodic boundary conditions.  This means a particle of fluid can exit out the right and come back in the left side, maintaining its same speed and trajectory.  I eventually implemented these boundary conditions on the sides, top and corners of the system.  The resulting code can be found in Appendix B.  Basically I followed the same procedure as at points in the bulk of the flow, but wrote three separate procedures for each group of boundary points; one for the top and bottom, one for the left and right, and one for the corners.  The code has one grid point of overlap on all of the boundaries, meaning points on the leftmost boundary are equal to those directly across on the rightmost boundary.  This is shown in Figure \ref{fig:boundfig}.  Because of the overlapping opposite sides, the boundary stream function only needed to be calculated on two of the boundaries, once for top and bottom, and once for left and right, and one more time for all four corners.  Since this only needs to be done $2n+1$ times, I do not use an iterative method, and instead simply solve Equation \ref{streamupdate} for $\psi_{i,j}$ at the boundary points.
+
+\subsubsection{Update}
+
+Lastly, the vorticity update is calculated by solving \ref{vortstreamNS} for $\frac{\partial \vec{\omega}}{\partial t}$ and using standard finite difference approximations, equations \ref{fdongrid} and \ref{fdongrid2}.  This creates the update
+\begin{equation}
+\frac{\partial \vec{\omega}}{\partial t} = - \frac{\partial \psi}{\partial y} \frac{\partial \vec{\omega}}{\partial x} + \frac{\partial \psi}{\partial x} \frac{\partial \vec{\omega}}{\partial y} + \text{Re}^{-1} \vec{\nabla}^{2} \vec{\omega} + \vec{f_{\nabla}},
+\end{equation}
+which, after applying finite difference derivative approximations and removing the forcing term that is added to the vorticity later with the update, becomes 
+
+\begin{center}
+\begin{gather*}
+\omega_{i,j} {\text{ update}} = \\ 
+ \frac{\psi_{i,j-1}^{m} - \psi_{i,j+1}^{m}}{2dy}\frac{\omega_{i+1,j}^{m}-\omega_{i-1,j}^{m}}{2dx} + \frac{\psi_{i+1,j}^{m}-\psi_{i-1,j}^{m}}{2dx}\frac{\omega_{i,j+1}^{m} - \omega_{i,j-1}^{m}}{2dy}\\
++\text{Re}^{-1} \frac{\omega_{i+1,j}^{m} - 2\omega_{i,j}^{m} + \omega_{i-1,j}^{m}}{dx^{2}} \frac{\omega_{i,j+1}^{m} -2 \omega_{i,j}^{m} + \omega_{i,j+1}^{m}}{dy^{2}}.
+\label{wupdate}
+\end{gather*}
+\end{center}
+
+I create a separate updated variable to ensure that the newly updated points are not used yet.  I also created separate update terms for the sides and corners.  Each update is then multiplied by $dt$ (since the updates are actually $\frac{\partial \vec{\omega}}{\partial t}$) and added to the old vorticity along with the curl of the forcing term.  The sides, corners and center points are updated separately, and the resulting grid of vorticity and stream functions are stored.  Finally, the time step is updated by adding $dt$, and the vorticity and stream functions are set to the new, updated values for the next time step.  The last feature I added was a progress-meter, which prints the percentage of the code that has been completed at certain intervals.
+	
+	The actual code could be cleaned up, especially the periodic boundary conditions.  I did not investigate the possibility of using iterative methods in more places, but this should be considered if the code is being run at higher resolutions where it will take longer.  I feel like there is still a huge amount of work I could do to improve this simulation, and hope to continue to upgrade and refine it in the future.  Both codes and experiment yielded promising results, as described in Chapter 3.
+
+ 
+\chapter{Results}   
+
+\subsection{Experimental}   
+
+	From each set of experimental data, the PIV program generated an enormous flattened matrix, giving the $x$ and $y$ velocities at each point.  Vector fields depicting these results are shown in Figure \ref{fig:PIVfield}.  These fields clearly show the motion of the fluid before and after the bifurcation, with the initial laminar solution mirroring the arrangement of magnets, and later being replaced by stable interlocking vortices as the forcing is increased.  
+	
+\begin{figure}[h!]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{./Figs/PIVfield40.pdf}
+  \caption{40 mA}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{./Figs/PIVfield100.pdf}
+  \caption{100 mA}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{./Figs/PIVfield180.pdf}
+  \caption{180 mA}
+\end{subfigure}
+%\begin{subfigure}{.4\textwidth}
+%  \centering
+%  \includegraphics[width=.5\linewidth]{exp110mA}
+%  \caption{110 mA}
+ % \label{110 mA}
+%\end{subfigure}
+\caption{Experimental vector fields at different driving current values. These were created in \textit{Mathematica} using the PIV data.  The laminar solution (at 40 mA) deviates from straight channels (100 mA) and eventually forms a pattern of interlocking vortices (180 mA).}
+\label{fig:PIVfield}
+\end{figure}	
+	
+	
+	To get more quantitative results, I calculated the root mean square (rms) of $x$-velocities in \textit{Mathematica} to gauge the deviation from the laminar flow, which mimics the forcing and is only in the $\hat{y}$ direction.  I repeated this process at each electrical current, with the end result being a single rms $x$-velocity value for each electrical current measurement.  To make this into a more universally understandable and useful set of data, I can approximate the Reynolds number (Re) associated with each current.
+	
+	
+	Here I get Reynolds numbers using a handful of parameters from my experimental setup and series of approximations.  I follow the steps laid out by Kelley and Ouellette \cite{Kelley2011} to arrive at the correct expression for Re.  As mentioned in the Introduction, Reynolds number is the relative importance of fluid inertia and viscous damping.  ``Relative importance" can be translated to the ratio of these two terms.  Viscous damping is represented by the damping time scale $\frac{L^{2}}{\nu}$, where $L$ is our length scale (here the period of the forcing, or experimentally, the distance between two rows of magnets), and ${\nu}$ is the kinematic viscosity measured with a viscometer and shown in Table \ref{tab:Remeas}.  Fluid inertia is captured by the advective timescale, equal to $\frac{L}{U}$, where the velocity scale, $U$ can be set to the total rms speed of the system, $\langle \vec{v} \cdot \vec{v} \rangle^{\frac{1}{2}}$, with the triangular brackets representing a mean \cite{Kelley2011}.  Therefore, the Reynolds number can be expressed as 
+\begin{equation}
+Re=\frac{\frac{L^{2}}{\nu}}{\frac{L}{U}}=\frac{UL}{\nu}.
+\label{Re}
+\end{equation}
+	Note that the units of kinematic viscosity ($\nu$) are $\frac{\text{length}^{2}}{\text{time}}$, making the Reynolds number unitless, as expected.  To use this method, I needed to make sure the measurements that I used have units that cancel correctly.  Firstly, the velocities the PIV software returned were not in conventional units.  These values were in pixels per frame, since the program measured shifts in pixels, over the time elapsed between two frames.  To correct this I measured the number of pixels across one period of the forcing pattern in a frame of the laminar solution.  Because it is difficult to see where exactly the center of a channel is, I measured over two periods to get an average width.  The period of forcing is a known distance, and allows me to find the number of pixels per meter by measuring the magnet spacing.  Using this, along with the fact that we were recording at 30 frames per second, the velocity vectors returned by the PIV software can be appropriately scaled by
+\begin{equation}
+\frac{\text{meters}}{\text{second}} = \frac{\text{pixels}}{\text{frame}} \times \underbrace{\frac{\text{meters}}{\text{pixel}} \times \frac{\text{frames}}{\text{second}}}_{\text{velocity correction term}}.
+\label{tomps}
+\end{equation}
+
+	I measured the kinematic viscosity of the working fluid using a Cannon-Fenske Routine Viscometer.  This involved measuring the time for a fluid to travel through a small capillary, and comparing the result with the same measurement for water.  From this, I found the working fluid to have a kinematic viscosity 2.54 times that of water.  The accepted kinematic viscosity ($\nu$) of water is given by $\nu= \frac{\eta}{\rho}$ where $\eta$ is the dynamic viscosity, (or coefficient of viscosity), and $\rho$ is the density.  Obtaining these values from \cite{Giancoli}, I found the $\nu_{water}$ to be $1.00 \times 10^{-6} \frac{\text{m}}{\text{s}}$, giving a value of $2.54 \times 10^{-6} \frac{\text{m}}{\text{s}}$ for the kinematic viscosity of the working fluid.  This is shown in Table \ref{tab:Remeas}.
+\begin{table}[h!]
+\caption{A table of measurements taken from the experimental setup necessary to determine Re.}
+\begin{center}
+\begin{tabular}{cc}
+\toprule
+Kinematic viscosity &  $2.54 \times 10^{-6}$ $\frac{\text{m}^{2}}{\text{s}}$ \\
+Pixels per meter & $18,632.6$  \\
+Frames per second  & $30$ \\
+Length scale (L)  & $0.038$ m \\
+\bottomrule
+\end{tabular}
+\end{center}
+\label{tab:Remeas}
+\end{table}
+
+  Using Equation \ref{Re}, the correctly scaled velocity and length measurements, and the measured viscosity, I calculated the Reynolds numbers.  The parameters used to calculate these are shown in Table \ref{tab:Remeas}.  The calculated Reynolds numbers, along with the corresponding currents are shown in Table \ref{tab:Rens}.  I plotted rms $x$-velocity as a function of both the electrical currents and the estimated Reynolds numbers.  This yielded the plots  shown in Figure \ref{fig:rmsxvsmA}. 
+
+ \begin{table}[h!]
+\caption{A table of estimated Reynolds numbers with corresponding current values.}
+\begin{center}
+\begin{tabular}{cc}
+\toprule
+Current (mA) & Reynolds number \\
+\midrule
+20 & 23.7 \\
+40 & 37.6 \\
+60 & 64.9 \\
+80 & 85.0 \\
+100 & 100.5 \\
+110 & 106.4 \\
+120 & 112.4 \\
+130 & 116.4 \\
+140 & 126.1 \\
+150 & 130.8 \\
+160 & 135.5 \\
+180 & 141.8 \\
+200 & 150.9 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\label{tab:Rens}
+\end{table}
+
+\begin{figure}[h!]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{./Figs/expbifdigC.pdf}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{./Figs/expbifdigR.pdf}
+  \label{fig:sub2}
+\end{subfigure}
+%\begin{subfigure}{.4\textwidth}
+%  \centering
+%  \includegraphics[width=.5\linewidth]{exp110mA}
+%  \caption{110 mA}
+ % \label{110 mA}
+%\end{subfigure}
+\caption{A bifurcation diagram made from experimental data.  The left plot shows rms $x$-velocities as a function of forcing current.  The right plot shows rms $x$-velocities as a function of Reynolds number.  Both plots show best fit curves given by equations \ref{bestfitC} and \ref{bestfitR}.}
+\label{fig:rmsxvsmA}
+\end{figure}
+
+
+%\begin{figure}
+ %\centering
+%\includegraphics[scale=.75]{./Figs/finalbifdig.pdf}
+%\caption{A bifurcation diagram made from experimental data.  It shows the rms x-velocities as a forcing current.}
+%\label{fig:rmsxvsmA}
+%\end{figure}
+
+%\begin{figure}
+% \centering
+%\includegraphics[scale=.75]{./Figs/expRebif.pdf}
+%\caption{A bifurcation diagram made from experimental data.  This one shows the rms x-velocities as a function of Reynolds number.}
+%\label{fig:rmsxvsRe}
+%\end{figure}
+	These agree with the predictions presented by Kelley and Ouellette \cite{Kelley2011}.  The critical Reynolds number, the one at which the bifurcation occurs, has been found to be around 61 \cite{Kelley2011}, or 70 \cite{Swinney1999} in a similar experiment using driven soap films.  The damping effects of friction on the bottom of the tray are most likely the cause of these discrepancies \cite{Kelley2011,Boffetta2012,Swinney1999}, as these can have a huge effect.  A very simple model of linear stability analysis predicts a critical Reynolds number of $\sqrt{2}$, or $\approx 1$ \cite{Thess1993, Swinney1999}, far off from any experimental results.  Our experimentally measured value, around 85, seems to be fairly consistent with the previous experimental results.  This result could definitely be improved by using a smoother tray, or a thin layer of oil as done in \cite{Gtech2015}.  
+	
+	The current data seems to scale like a square root function, as expected \cite{Kelley2011}.  Assuming the bifurcated data scaled in the form $y=x^{\alpha}$, I found the exponent ($\alpha$) by plotting the natural logarithms of rms velocities, current, and Reynolds numbers, and calculated the slope of the resulting linear functions.  This gave a best fit power of $\alpha = 0.353$ for the current data, and $\alpha = 0.2175$ for the Reynolds number data.  These were linearly fitted to create the functions
+\begin{equation}
+-1.662 + 0.3595 x^{0.353}
+\label{bestfitC}
+\end{equation}
+and
+\begin{equation}
+-4.844 + 1.8421 x^{0.2175}
+\label{bestfitR}
+\end{equation}
+for rms $x$-velocities as functions of current and Reynolds numbers respectively.  These yield R-squared values of 0.9946 and 0.9856.  The functions are plotted with the experimental data in Figure \ref{fig:rmsxvsmA}.
+
+	This implies that the Kolmogorov bifurcation is indeed a supercritical pitchfork.  While a root is still a good fit, the Reynolds number plot seems to scale almost linearly.  The results from \cite{Kelley2011} also seem to follow this trend.  This error could maybe be attributed to the friction of the fluid on the bottom of the tray.  This friction increases with velocity \cite{Swinney1999}, so because we found Reynolds numbers experimentally using observed velocity, we might expect higher forcing to yield disproportionately small Reynolds numbers.  This could cause the curve to appear more linear, and is something worth investigating further.
+
+\subsection{Numerical}  
+ 
+ 
+ I ran both the time-independent and time-dependent codes describe in Chapter 2, the latter with both no-slip and periodic boundary conditions.  
+ 
+ 	The time-independent code captures the initial bifurcation very well, but could not capture turbulent solutions, or instabilities and periodic solutions as they began to form.  Nonetheless, the time-independent code does show the qualitative motion of the fluid fairly well.  Figure \ref{fig:timeindpics} shows line integral convolution plots of the time-independent data.  These were done using \textit{Mathematica}'s \texttt{LineIntegralConvolutionPlot} function, as done by Mokhasi \cite{Mokhasi2013}.  This introduces static of a specified color scheme into the grid, and integrates each point along the path of the fluid, dragging the color with it and creating easy to visualize fluid flows.  Note that the time-independent code does not allow us to determine if the image furthest to the right depicts a steady, stable solution, a periodic or chaotic regime.  This is something we can deal with using the time-dependent code.
+ 	
+ 		
+\begin{figure}[h!]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{./Figs/Boxflowlam.pdf}
+  \caption{Low Re}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{./Figs/Boxflowvort.pdf}
+  \caption{Higher Re}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{./Figs/Boxflowwild.pdf}
+  \caption{Highest Re}
+\end{subfigure}
+%\begin{subfigure}{.4\textwidth}
+%  \centering
+%  \includegraphics[width=.5\linewidth]{exp110mA}
+%  \caption{110 mA}
+ % \label{110 mA}
+%\end{subfigure}
+\caption{Line integral convolution plots of the time-independent code.  (a) The laminar solution, visible at low Re.  (b) The fluid after its initial bifurcation, and (c) The flow at an even higher Reynolds number.  Notice that by being time-independent, (c) is unable to capture periodic or chaotic motion, and therefore generates an impossible result.}
+\label{fig:timeindpics}
+\end{figure}	
+	
+ 
+	For the time-dependent code, I determined the optimal set of parameters, all of which can be found in Table \ref{tab:CFDparam}.  I chose each of these after testing a wide range of options.  My goal was to make the code run as quickly as possible without losing too much accuracy.  I determined the ideal grid size to be 30 by 30.  This seemed like enough resolution to accurately capture the motion of the fluid over four full periods of the sinusoidal forcing pattern, while usually not taking more than 30 minutes for the code to run in its entirety.  I confirmed that this was enough resolution by trying a smaller grid, and making sure the macroscopic motion of the fluid progressed the same way.  This is the same strategy I used to determine most of the other parameters.  For time-step size ($dt$), I ran several tests over a variety of values for $dt$.  I did this for the most turbulent case, since faster moving fluid requires smaller time-steps to capture its motion.  I found the threshold at which a larger $dt$ either causes an overflow, or changes the behavior of the simulation to be above $0.0001$ but below $0.001$, so I used the former value as my time-step size.  By the same process, I varied the number of time-steps until I reached a point where the code had settled down.  I then changed the $Kv$ value, which is proportional to the inverse of the Reynolds number ($Re^{-1}$) and forcing amplitudes to find the point at which the bifurcation occurred.  While $Kv$ does take the place of $\frac{1}{Re}$ in the code, we can only say that the Re value here is proportional to the actual Reynolds number, since forcing amplitude affects velocity timescales, and is not captured in $Kv$.
+ 
+ \begin{table}[h!]
+\caption{A table of parameters used for the time-dependent code.}
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+Parameter & Value for solid boundaries & Value for periodic boundaries \\
+\midrule
+Number of gridpoints ($nxy$) & $30$ & $30$ \\
+Length of a time-step ($dt$)  & $0.0001$ & $0.0001$  \\
+Number of time-steps  & $3000$ & $5000$ \\
+Maximum SOR iterations  & $100$ & $100$ \\
+$Kv$ ($\propto$ to $Re^{-1}$) & variable: from 0.1 to 0.4 & variable: from 0.02 to 0.2 \\
+ \hline
+\end{tabular}
+\end{center}
+\label{tab:CFDparam}
+\end{table}
+
+
+
+	% AGAIN A LABEL IS PROVIDED SO THAT THIS TABLE CAN BE REFERENCED
+ 
+
+	Each code generated a stream function and vorticity value at every grid point.  Plots of vorticity at different values of $Kv$ (and at later time-steps) can be found in Figure \ref{fig:CFDBvorts} for the solid boundary case and  \ref{fig:CFDPvorts} for the periodic boundary case.  Note that the the laminar case looks like the initial forcing pattern, since the vorticity of Equation \ref{forcing} will also give stripes.  In each of these plots, red (positive vorticity) represents counter-clockwise rotation, and blue (negative vorticity) represents clockwise rotation.  This means the dark bands in the laminar vorticity plots actually represent the areas between channels.  The differences in band thickness and magnitude in the laminar cases is a result of the sine wave pattern not being perfectly described by 30 grid points.  Even though the forcing is exactly four periods, the grid points can fall directly on the peaks, or off to the side, resulting in slightly different forcing across the grid.  This certainly introduces some error into the simulations, and could be remedied by increasing the resolution.
+
+\begin{figure}[h!]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{./Figs/CFDBp5kvvort.pdf}
+  \caption{at $\frac{1}{Kv} = 2$}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{./Figs/CFDBp2kvvort.pdf}
+  \caption{at $\frac{1}{Kv} = 5$}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{./Figs/CFDBp1kvvort.pdf}
+  \caption{at $\frac{1}{Kv} = 10$}
+\end{subfigure}
+\caption{Plots of vorticity generated from the time-dependent code with no-slip boundary conditions.  Each image is the result after 2,000 time-steps.  Here, red represents a positive vorticity, and blue a negative vorticity.  Each plot shows the results at a different value of $\frac{1}{Kv}$, a number proportional to the Reynolds number.}
+\label{fig:CFDBvorts}
+\end{figure}	 
+
+
+
+\begin{figure}[h!]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{./Figs/CFDPp2kvvort.pdf}
+  \caption{at $\frac{1}{Kv} = 5$}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{./Figs/CFDPp09kvvort.pdf}
+  \caption{at $\frac{1}{Kv} = 11.1$}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{./Figs/CFDPp05kvvort.pdf}
+  \caption{at $\frac{1}{Kv} = 20$}
+\end{subfigure}
+\caption{Plots of vorticity generated from the time-dependent code using periodic boundary conditions.  Each image is the result after 10,000 time-steps.  Again, each plot shows the results at a different value of $\frac{1}{Kv}$, a number proportional to the Reynolds number.}
+\label{fig:CFDPvorts}
+\end{figure}	 
+	
+
+	From the stream functions, which are also generated by the simulation, I could extract $x$ and $y$ velocities using equations \ref{streamx} and \ref{streamy}.  To take the derivative, I used the fourth order differential matrices from the time-independent code, described in Chapter 2.  One check to make sure the code is performing realistically is to check the incompressibility condition.  As stated in Chapter 2, for an incompressible fluid, $\nabla \cdot \vec{v}= \frac{\partial v_{x}}{\partial x} + \frac{\partial v_{y}}{\partial y} = 0$.  Figure \ref{fig:incomp} is a plot of this value at each point, all of which are very close to zero.  Looking at the formula, this result should be obvious, since we are essentially taking $\frac{\partial}{\partial y}\frac{\partial}{\partial x} \psi$ twice, which must always be zero.
+
+	
+\begin{figure}[h!]
+ \centering
+\includegraphics[width=0.6\linewidth]{Figs/incomp.pdf}
+\caption{A plot of the divergence of velocity at each point.  These all being close to zero means the code enforces the incompressibility condition.}
+\label{fig:incomp}
+\end{figure}
+	
+	
+	With both velocities found, I can calculate the rms $x$-velocities, and plot them as a function of $\frac{1}{Kv}$.  Figures \ref{fig:timedepbifsB} and \ref{fig:timedepbifsP} show bifurcation diagrams of this data.  I used the points immediately after the bifurcation to calculate exponents for a function of the form $y=x^{\alpha}$ by the method described earlier.  I got exponents of $0.42$ for the no-slip bounded code, and $0.40$ for the periodic bounded code.  These functions are plotted for the steady bifurcation region in Figure \ref{fig:timedepbifsB} and \ref{fig:timedepbifsP}.  The plots exhibit the same behavior as the experimental data with exponents between 0 and 1, confirming that the time-dependent codes are performing correctly.  The scaling factor here is pretty close to the experimental data, with error most likely due to friction in the experiment as described earlier.  
+	
+\begin{figure}[h!]
+ \centering
+\includegraphics[width=0.9\linewidth]{./Figs/CFDbifdigB.pdf}
+\caption{A bifurcation diagram for the no-slip boundary condition's code, showing rms $x$-velocities as function of $\frac{1}{Kv}$, after different numbers of timesteps.}
+\label{fig:timedepbifsB}
+\end{figure}
+
+\begin{figure}[h!]
+ \centering
+\includegraphics[width=0.9\linewidth]{./Figs/CFDbifdigP.pdf}
+\caption{A bifurcation diagram for the periodic bounded code, showing rms $x$-velocities as function $\frac{1}{Kv}$, after different numbers of timesteps.}
+\label{fig:timedepbifsP}
+\end{figure}
+
+	
+%\begin{figure}[h!]
+%\centering
+%\begin{subfigure}{.8\textwidth}
+%  \centering
+%  \includegraphics[width=1\linewidth]{./Figs/CFDbifdigB.pdf}
+%  \caption{Bounded}
+%\end{subfigure}%
+%\begin{subfigure}{.8\textwidth}
+%  \centering
+%  \includegraphics[width=1\linewidth]{./Figs/CFDbifdigP.pdf}
+%  \caption{Periodic}
+%\end{subfigure}
+%\caption{Bifurcation diagrams for periodic and bounded codes.  These plots show rms x-velocities as function of $\frac{1}{Kv}$, a value proportional to the Reynolds number, after different numbers of timesteps.  Notice while initially the points converge to stable solutions, they clearly spread out at later times.}
+%\label{fig:timedepbifs}
+%\end{figure}	 
+
+	The behavior of these plots at higher Reynolds numbers ($Re \propto \frac{1}{Kv}$) is also very revealing.  In the no-slip boundary plot, Figure \ref{fig:timedepbifsB}, points seem to fluctuate upwards and downward in time without trending towards any particular value, implying that the behavior here is either periodic or turbulent.  The periodic bounded code seems to generally display points in temporal order, implying that these values are trending towards some value.
+	
+	These observations seem to be a direct result of having solid boundaries.  The bounded fluid code settled into turbulent or steady motion much more quickly than its periodic counterpart, and did so at lower Reynolds numbers.  I suspect this is caused by the fact that the bounded code is subjected to many more perturbations, as the flow runs into, and is changed by the boundaries.  It is also possible that given enough time, even the extremely chaotic looking regions in the no-slip bounded code would have eventually settled down into some other form of solution.  Behavior after extremely long times is definitely something worth investigating.
+	
+	Because the experiment only looks at an area at the center of the forcing pattern, the periodic bounded, time-dependent code with periodic boundary conditions mirrors it well.  The bifurcation diagrams generated from the experimental data, Figure \ref{fig:rmsxvsmA}, and from the periodic bounded code, Figure \ref{fig:timedepbifsP}, closely resemble each other, with a sharp bifurcation point.  These two curves both scale as square root functions after the bifurcation point, as described in Kelley and Ouellette's experiment \cite{Kelley2011}.  This confirms that the flow undergoes a supercritical bifurcation as stated in \cite{Swinney1999}.  While we did not seem to reach the Hopf bifurcation that is expected to appear after the steady regime \cite{Thess1993}, both the experiment and code should be able to demonstrate these phenomena at higher Reynolds numbers.
+	
+	  The periodic bounded data could be improved by running out to further timesteps, to see if it was in any sort of limit cycle.  The data in Figure \ref{fig:timedepbifsP} shows rms $x$-velocities trending in one direction in time, implying that they are going to stabilize, or are moving in a slow limit cycle.  Running the code out further in time could clarify this.  More timesteps could also be an improvement to the time-dependent, no-slip bounded code, to confirm if the motion at later time steps is chaotic or some sort of periodic limit cycle.
+	
+	The next step in comparing these results would be matching a Reynolds number to the numerical data, and comparing this to the experiment.  We would expect a significant discrepancy in the scaling of the bifurcation diagrams, which would mostly be attributed to friction on the bottom of the tray, allowing us to estimate and add a friction parameter to the code.  This parameter would be linearly dependent on velocity \cite{Thess1993,Swinney1999}, a constant term we could estimate.
+ 
+\chapter{Conclusions}
+
+	I successfully demonstrated a 2-dimensional Kolmogorov flow bifurcation using an experimental and numerical approach.  The experiment yielded results consistent with \cite{Kelley2011, Thess1993, Swinney1999} qualitatively matching up with the patterns generated by their setups.  The experiment showed a bifurcation, shifting from the laminar solution to a set of stable vortices.  
+	
+	For the experimental portion, I used Particle Image Velocimetry to analyze the flow.  I was able to show the motion of the fluid qualitatively in vector fields shown in Figure \ref{fig:PIVfield} and quantitatively in a bifurcation diagram of root mean square $x$-velocities, shown in Figure \ref{fig:rmsxvsmA}.  The Reynolds numbers were approximated, leading to a critical Reynolds number of around 85.  This is reasonably close to the results found in \cite{Kelley2011} and \cite{Swinney1999} of 61 and 70 respectively.  The discrepancies in these measurements are most likely due to damping from friction on the bottom of the tray, a source of error that is difficult to avoid.
+	
+	Numerically the problem was studied using two different numerical schemes.  Every variation of the code produced good results, each having its own strengths and weaknesses.  The time-independent code, modified from \cite{Mokhasi2013}, was by far the fastest, and generated very good results for the initial bifurcation of the system, as shown in Figure \ref{fig:timeindpics}.  However, due to its time-independent nature, it could not show any periodic or turbulent solutions, making its results of limited use without a time-dependent code to confirm that the solutions are actually stable.
+	
+	The time-dependent code, followed the technique from \cite{WPI2001} and was implemented using methods from \cite{Franklin2013}.  This was able to show more interesting behavior, but was much slower and therefore had to be run at lower resolution.  Two different boundary conditions were studied, both of which demonstrated the initial bifurcation.  The bounded code seemed to fall into periodic solutions and turbulence much more quickly, while the periodic bounded code slowly settled to more stable flows.  
+	
+	There is still a lot of improvements that can be made to this experiment, and additional extensions worth investigating.  The code works well, but could definitely be cleaned up to run more quickly.
+	
+	The experiment could be made more accurate by implementing a more complicated tray setup \cite{Gtech2014, Gtech2015}.  New forcing patterns could also be investigated.  For example, concentric squares of magnet polarity with one electrode at the middle, and the other around the edge of the tray would yield anti-parallel concentric circles (or squares) of forcing.  This could create some very interesting new patterns.  
+	
+	Armed with the time-dependent code, any future extensions could be tested fairly quickly using the simulation, before reconstructing the whole experiment.  The two pieces of this thesis together provide an excellent set of tools for analyzing any sort of two-dimensional fluid flow.
+	
+	While no piece of this project is perfect, it served as an excellent introduction to fluid dynamics.  I was able to study a subject I had never really seen before, and make sense of it using the physics and math I had learned over the last few years.  I honestly had a really great time moving through this turbulent thesis process, and hope to keep working on wild and exciting fluid systems far into the future.
+    
+    
+    
+	
+%\subsection{Tips for Bibliographies}
+%\begin{enumerate}
+%\item Like with thesis formatting, the sooner you start compiling your bibliography for something as large as thesis, the better. Typing in source after source is mind-numbing enough; do you really want to do it for hours on end in late April? Think of it as procrastination.
+%\item The cite key (a citation's label) needs to be unique from the other entries.
+%\item When you have more than one author or editor, you need to separate each author's name by the word ``and'' e.g.\\ \verb+Author = {Noble, Sam and Youngberg, Jessica},+.
+%\item Bibliographies made using BibTeX (whether manually or using a manager) accept LaTeX markup, so you can italicize and add symbols as necessary.
+%\item To force capitalization in an article title or where all lowercase is generally used, bracket the capital letter in curly braces.
+%\item You can add a Reed Thesis citation\footnote{\cite{noble:2002}} option. The best way to do this is to use the phdthesis type of citation, and use the optional ``type'' field to enter ``Reed thesis'' or ``Undergraduate thesis''. Here's a test of Chicago, showing the second cite in a row\footnote{\cite{noble:2002}} being different. Also the second time not in a row\footnote{\cite{reedweb:2007}} should be different. Of course in other styles they'll all look the same.
+%\end{enumerate}
+
+
+
+%If you feel it necessary to include an appendix, it goes here.
+    \appendix
+      \chapter{Differential Matrices and Time-independent Code}    
+
+This appendix shows a time-independent Kolmogorov solver code, modified from \cite{Mokhasi2013}, and differential matrices, modified from \cite{Franklin2013} using finite difference approximations from \cite{Fornberg1988}.  The code here generates $\frac{\partial}{\partial x}$, $\frac{\partial}{\partial y}$, $\frac{\partial^{2}}{\partial x^{2}}$, and $\frac{\partial^{y}}{\partial y^{2}}$ differential operator matrices.
+\clearpage
+\centerline{\textbf{Time-independent code}}
+\begin{figure}[h!]
+
+\text{\scriptsize Below, grid and Reynolds number (Rey) defined (again, forcing amplitude and other parameters}
+\text{\scriptsize are not taken into account, so the actual value of Rey here is not too meaningful).}
+
+\includegraphics[scale=.5]{./Figs/ApendixA/fig1.pdf}
+
+\text{\scriptsize Differential matrices created.}
+
+\includegraphics[scale=.5]{./Figs/ApendixA/fig2.pdf}
+
+\includegraphics[scale=.5]{./Figs/ApendixA/fig6.pdf}
+
+\text{\scriptsize  Variables defined (for $x$-velocity, $y$-velocity, pressure, and forcing).}
+
+\includegraphics[scale=.5]{./Figs/ApendixA/fig7.pdf}
+
+\text{\scriptsize Navier-Stokes momentum equations defined (for $\frac{\partial v}{\partial t}$), along with the incompressibility condition.}
+
+\includegraphics[scale=.5]{./Figs/ApendixA/fig16.pdf}
+
+\text{\scriptsize No-slip boundaries defined.}
+
+\includegraphics[scale=.5]{./Figs/ApendixA/fig10.pdf}
+
+\text{\scriptsize Boundaries applied.}
+
+\includegraphics[scale=.5]{./Figs/ApendixA/fig11.pdf}
+
+\text{\scriptsize Equations joined into a single expression.}
+
+\includegraphics[scale=.5]{./Figs/ApendixA/fig12.pdf}
+
+\text{\scriptsize Equations solved vie root finding (to find where $\frac{\partial v}{\partial t}$, and divergence are zero).}
+
+\includegraphics[scale=.5]{./Figs/ApendixA/fig13.pdf}
+
+\text{\scriptsize Solutions put into plot-able form}
+
+\includegraphics[scale=.5]{./Figs/ApendixA/fig14.pdf}
+
+\text{\scriptsize Solutions plotted in a line integral convolution plot.}
+
+\includegraphics[scale=.5]{./Figs/ApendixA/fig15.pdf}
+\end{figure}
+
+
+\centerline{\textbf{Differential matrices}}
+
+
+\begin{figure}[h!]
+\includegraphics[scale=.5]{./Figs/D1Mat.pdf}
+\end{figure}
+\begin{figure}[h!]
+\includegraphics[scale=.5]{./Figs/D1Mat2.pdf}
+\end{figure}
+
+\begin{figure}[h!]
+\includegraphics[scale=.5]{./Figs/D2Mat.pdf}
+\end{figure}
+\begin{figure}[h!]
+\includegraphics[scale=.5]{./Figs/D2Mat2.pdf}
+\end{figure}
+\clearpage
+
+
+
+
+
+%\begin{figure}[h!]
+% \centering
+%\includegraphics[width=\linewidth]{./Figs/timeind1.png}
+%\end{figure}
+%\begin{figure}[h!]
+% \centering
+%\includegraphics[width=\linewidth]{./Figs/timeind2.png}
+%\end{figure}
+%\begin{figure}[h!]
+% \centering
+%\includegraphics[width=\linewidth]{./Figs/timeind3.png}
+%\end{figure}      
+      
+      
+      
+      \chapter{Time-dependent Code}
+      
+      The time-dependent code, created by following techniques from \cite{WPI2001} using methods from \cite{Franklin2013}.  The code shown here is the version in which I use periodic boundaries.
+ 
+ \begin{figure}[h!]
+ \centering
+\includegraphics[width=\linewidth]{./Figs/timedepcode1.pdf}
+\end{figure}
+\begin{figure}
+ \centering
+\includegraphics[width=\linewidth]{./Figs/timedepcode2.pdf}
+\end{figure}
+      
+      
+
+
+%This is where endnotes are supposed to go, if you have them.
+%I have no idea how endnotes work with LaTeX.
+
+  \backmatter % backmatter makes the index and bibliography appear properly in the t.o.c...
+
+% if you're using bibtex, the next line forces every entry in the bibtex file to be included
+% in your bibliography, regardless of whether or not you've cited it in the thesis.
+    \nocite{*}
+
+% Rename my bibliography to be called "Works Cited" and not "References" or ``Bibliography''
+% \renewcommand{\bibname}{Works Cited}
+
+%    \bibliographystyle{bsts/mla-good} % there are a variety of styles available; 
+\bibliographystyle{ieeetr}
+% replace ``plainnat'' with the style of choice. You can refer to files in the bsts or APA 
+% subfolder, e.g. 
+%\bibliographystyle{APA/apa-good}  % or
+\bibliography{thesis}
+ % Comment the above two lines and uncomment the next line to use biblatex-chicago.
+% \printbibliography[heading=bibintoc]
+
+% Finally, an index would go here... but it is also optional.
+\end{document}
